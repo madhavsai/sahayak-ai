@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ project.name }} — Finance{% endblock %}
+{% block content %}
+
+<a href="/app/projects/{{ project.id }}" class="back-link">← {{ project.name }}</a>
+
+<div class="page-head">
+  <h1>{{ project.name }} — Project Finance</h1>
+  <p class="page-sub">{{ project.location }} · {{ project.client }}</p>
+</div>
+
+<div class="health-grid">
+  <div class="health-card"><span class="health-label">Contract value</span><span class="health-value">₹{{ "{:,}".format(f.contract_value) }}</span></div>
+  <div class="health-card"><span class="health-label">Revenue received</span><span class="health-value">₹{{ "{:,}".format(f.revenue_received) }}</span></div>
+  <div class="health-card"><span class="health-label">Outstanding</span><span class="health-value">₹{{ "{:,}".format(f.outstanding) }}</span></div>
+  <div class="health-card"><span class="health-label">Budget</span><span class="health-value">₹{{ "{:,}".format(f.budget) }}</span></div>
+  <div class="health-card"><span class="health-label">Committed</span><span class="health-value">₹{{ "{:,}".format(f.committed) }}</span></div>
+  <div class="health-card"><span class="health-label">Actual spend</span><span class="health-value">₹{{ "{:,}".format(f.actual) }}</span></div>
+  <div class="health-card {{ 'health-card-alert' if f.variance > 0 else '' }}"><span class="health-label">Forecast</span><span class="health-value">₹{{ "{:,}".format(f.forecast) }}</span></div>
+</div>
+
+{% if f.variance > 0 %}
+<div class="ai-answer-card" style="margin-top:24px; max-width:640px;">
+  <span class="ai-answer-label">AI</span>
+  <p class="ai-answer-text">Projected cost is ₹{{ "{:,}".format(f.variance) }} above the current budget for {{ project.name }}, driven primarily by open purchase orders already committed against this project.</p>
+</div>
+{% endif %}
+
+{% endblock %}

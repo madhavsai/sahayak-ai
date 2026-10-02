@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Payables{% endblock %}
+{% block content %}
+
+<a href="/app/finance" class="back-link">← Finance</a>
+
+<div class="page-head">
+  <h1>Payables</h1>
+  <p class="page-sub">What your business owes vendors.</p>
+</div>
+
+<div class="table-card">
+  <table class="data-table">
+    <thead><tr><th>Vendor</th><th>Bill</th><th>Project</th><th>Amount</th><th>Due date</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for p in payables %}
+      <tr>
+        <td class="cell-strong">{{ p.vendor }}</td>
+        <td>{{ p.bill }}</td>
+        <td>{{ p.project }}</td>
+        <td class="cell-mono">₹{{ "{:,}".format(p.amount) }}</td>
+        <td class="cell-mono">{{ p.due_date }}</td>
+        <td><span class="status-chip status-{{ p.status|lower|replace(' ', '-') }}">{{ p.status }}</span></td>
+        <td><button type="button" class="table-link schedule-payment-btn">Schedule payment</button></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<p class="inline-confirm" id="payables-confirm" hidden></p>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  document.querySelectorAll(".schedule-payment-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      btn.textContent = "Scheduled ✓";
+      btn.disabled = true;
+      const el = document.getElementById("payables-confirm");
+      el.textContent = "✓ Payment scheduled — requires approval per policy (payments > ₹1 lakh need Owner sign-off).";
+      el.hidden = false;
+    });
+  });
+})();
+</script>
+{% endblock %}

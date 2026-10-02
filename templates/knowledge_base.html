@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Knowledge{% endblock %} — Sahayak AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/app-static/app.css">
+<link rel="stylesheet" href="/knowledge-static/knowledge.css">
+</head>
+<body class="app-body">
+
+<div class="app-shell">
+
+  <aside class="app-sidebar">
+    <a href="/knowledge/home" class="app-brand">Sahayak <span>AI</span></a>
+    <p class="sub-brand">Knowledge Platform</p>
+    <nav class="app-nav">
+      <a href="/knowledge/home" class="nav-item {{ 'is-active' if active=='home' else '' }}">Home</a>
+      <a href="/knowledge/capture" class="nav-item nav-item-accent {{ 'is-active' if active=='capture' else '' }}">+ Add Knowledge</a>
+      <a href="/knowledge/search" class="nav-item {{ 'is-active' if active=='search' else '' }}">Search &amp; Ask AI</a>
+      <a href="/knowledge/library" class="nav-item {{ 'is-active' if active=='library' else '' }}">Knowledge</a>
+      <a href="/knowledge/connectors" class="nav-item {{ 'is-active' if active=='connectors' else '' }}">Connectors</a>
+      <a href="/knowledge/entities" class="nav-item {{ 'is-active' if active=='entities' else '' }}">Entities</a>
+
+      <p class="nav-section-label">Platform</p>
+      <a href="/knowledge/ingestion" class="nav-item {{ 'is-active' if active=='ingestion' else '' }}">Ingestion</a>
+      <a href="/knowledge/collections" class="nav-item {{ 'is-active' if active=='collections' else '' }}">Collections</a>
+      <a href="/knowledge/data-quality" class="nav-item {{ 'is-active' if active=='data-quality' else '' }}">Data Quality</a>
+      <a href="/knowledge/security" class="nav-item {{ 'is-active' if active=='security' else '' }}">Security</a>
+      <a href="/knowledge/audit" class="nav-item {{ 'is-active' if active=='audit' else '' }}">Audit Logs</a>
+      <a href="/knowledge/settings" class="nav-item {{ 'is-active' if active=='settings' else '' }}">Settings</a>
+    </nav>
+    <div class="sidebar-foot">
+      <a href="/app/home" class="back-to-app">← Back to main app</a>
+    </div>
+  </aside>
+
+  <div class="app-main">
+    <header class="app-topbar">
+      <form class="cmdbar-trigger cmdbar-trigger-form" action="/knowledge/search" method="get">
+        <input type="text" name="q" placeholder="Search or ask anything..." class="topbar-search-input">
+        <kbd>Enter</kbd>
+      </form>
+      <div class="topbar-right">
+        <div class="dropdown-wrap">
+          <button type="button" class="lang-pill" id="lang-pill-btn">EN</button>
+          <div class="dropdown-panel dropdown-panel-small" id="lang-dropdown" hidden>
+            <button type="button" class="dropdown-item" data-lang="EN">English</button>
+            <button type="button" class="dropdown-item" data-lang="TE">తెలుగు (Telugu)</button>
+            <button type="button" class="dropdown-item" data-lang="HI">हिन्दी (Hindi)</button>
+          </div>
+        </div>
+
+        <div class="dropdown-wrap">
+          <button type="button" class="topbar-icon-btn" id="notif-btn" title="Notifications">
+            🔔{% if notifications %}<span class="notif-badge">{{ notifications|length }}</span>{% endif %}
+          </button>
+          <div class="dropdown-panel dropdown-panel-wide" id="notif-dropdown" hidden>
+            {% for n in notifications %}
+            <div class="notif-row notif-row-{{ n.kind }}">
+              <span>{{ n.text }}</span>
+              <span class="notif-time">{{ n.time }}</span>
+            </div>
+            {% else %}
+            <p class="cell-muted" style="padding:12px;">No notifications.</p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="dropdown-wrap">
+          <button type="button" class="user-pill" id="user-pill-btn">Ravi Kumar <span class="user-role">Owner</span></button>
+          <div class="dropdown-panel dropdown-panel-small" id="user-dropdown" hidden>
+            <a href="/knowledge/settings" class="dropdown-item">Settings</a>
+            <a href="/login" class="dropdown-item">Log out</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-content">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+
+<script src="/knowledge-static/knowledge-shell.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

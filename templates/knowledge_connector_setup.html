@@ -1,0 +1,152 @@
+{% extends "knowledge_base.html" %}
+{% block title %}Connect {{ connector.name }}{% endblock %}
+{% block content %}
+
+<a href="/knowledge/connectors" class="back-link">← Connectors</a>
+
+<div class="page-head">
+  <h1>Connect {{ connector.name }}</h1>
+  <p class="page-sub">{{ connector.desc }}</p>
+</div>
+
+<div class="wizard-steps" id="wizard-steps">
+  <span class="wizard-step-dot is-active" data-step="1">1. Account</span>
+  <span class="wizard-step-dot" data-step="2">2. Scope</span>
+  <span class="wizard-step-dot" data-step="3">3. Permissions</span>
+  <span class="wizard-step-dot" data-step="4">4. Content</span>
+  <span class="wizard-step-dot" data-step="5">5. Sync</span>
+  <span class="wizard-step-dot" data-step="6">6. Review</span>
+</div>
+
+<div class="wizard-card">
+
+  <div class="wizard-panel" data-panel="1">
+    <h2 class="block-title">Connect your account</h2>
+    <p class="cell-muted">Sahayak uses a secure sign-in — it never sees or stores your password.</p>
+    <button type="button" class="btn btn-primary wizard-connect-btn">Sign in and authorize {{ connector.name }}</button>
+    <p class="cell-muted wizard-connected-note" hidden>✓ Account connected as <strong>ravi.kumar@hyderabadluxuryvillas.in</strong></p>
+  </div>
+
+  <div class="wizard-panel" data-panel="2" hidden>
+    <h2 class="block-title">Choose what to sync</h2>
+    {% for opt in scope_options %}
+    <label class="wizard-radio">
+      <input type="radio" name="scope" value="{{ opt }}" {% if loop.first %}checked{% endif %}>
+      <span>{{ opt }}</span>
+    </label>
+    {% endfor %}
+  </div>
+
+  <div class="wizard-panel" data-panel="3" hidden>
+    <h2 class="block-title">Choose permissions</h2>
+    {% for p in permission_modes %}
+    <label class="wizard-radio wizard-radio-wide">
+      <input type="radio" name="permission" value="{{ p.label }}" {% if loop.first %}checked{% endif %}>
+      <span><strong>{{ p.label }}</strong><br><span class="cell-muted">{{ p.desc }}</span></span>
+    </label>
+    {% endfor %}
+  </div>
+
+  <div class="wizard-panel" data-panel="4" hidden>
+    <h2 class="block-title">Choose content types</h2>
+    {% for ct in content_types %}
+    <label class="wizard-check">
+      <input type="checkbox" name="content" value="{{ ct }}" checked>
+      <span>{{ ct }}</span>
+    </label>
+    {% endfor %}
+    <h3 style="margin-top:20px; font-size:0.95rem;">Folders</h3>
+    <div class="folder-tree">
+      <p class="folder-tree-label">Include</p>
+      {% for f in content_tree.include %}<span class="related-tag">{{ f }}</span>{% endfor %}
+      <p class="folder-tree-label" style="margin-top:10px;">Exclude</p>
+      {% for f in content_tree.exclude %}<span class="related-tag related-tag-exclude">{{ f }}</span>{% endfor %}
+    </div>
+  </div>
+
+  <div class="wizard-panel" data-panel="5" hidden>
+    <h2 class="block-title">Sync frequency</h2>
+    {% for s in sync_options %}
+    <label class="wizard-radio">
+      <input type="radio" name="sync" value="{{ s }}" {% if loop.index == 2 %}checked{% endif %}>
+      <span>{{ s }}</span>
+    </label>
+    {% endfor %}
+  </div>
+
+  <div class="wizard-panel" data-panel="6" hidden>
+    <h2 class="block-title">Review</h2>
+    <div class="review-summary" id="review-summary">
+      <div class="settings-row"><span>Account</span><span>ravi.kumar@hyderabadluxuryvillas.in</span></div>
+      <div class="settings-row"><span>Scope</span><span id="review-scope">—</span></div>
+      <div class="settings-row"><span>Permissions</span><span id="review-permission">—</span></div>
+      <div class="settings-row"><span>Content</span><span id="review-content">—</span></div>
+      <div class="settings-row"><span>Sync frequency</span><span id="review-sync">—</span></div>
+      <div class="settings-row"><span>Estimated items</span><span>~{{ (connector.name|length * 311) }} items, ~1.2 GB</span></div>
+    </div>
+    <button type="button" class="btn btn-primary btn-wide" id="wizard-finish-btn" style="margin-top:18px;">Connect &amp; Start Sync</button>
+  </div>
+
+</div>
+
+<div class="wizard-nav">
+  <button type="button" class="btn btn-ghost" id="wizard-back-btn" disabled>Back</button>
+  <button type="button" class="btn btn-primary" id="wizard-next-btn">Next</button>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  const totalSteps = 6;
+  let step = 1;
+  const dots = document.querySelectorAll(".wizard-step-dot");
+  const panels = document.querySelectorAll(".wizard-panel");
+  const nextBtn = document.getElementById("wizard-next-btn");
+  const backBtn = document.getElementById("wizard-back-btn");
+
+  function render() {
+    dots.forEach((d) => d.classList.toggle("is-active", Number(d.dataset.step) <= step));
+    panels.forEach((p) => { p.hidden = Number(p.dataset.panel) !== step; });
+    backBtn.disabled = step === 1;
+    nextBtn.hidden = step === totalSteps;
+    if (step === totalSteps) fillReview();
+  }
+
+  function fillReview() {
+    const scope = document.querySelector('input[name="scope"]:checked');
+    const perm = document.querySelector('input[name="permission"]:checked');
+    const sync = document.querySelector('input[name="sync"]:checked');
+    const content = Array.from(document.querySelectorAll('input[name="content"]:checked')).map((c) => c.value);
+    document.getElementById("review-scope").textContent = scope ? scope.value : "—";
+    document.getElementById("review-permission").textContent = perm ? perm.value : "—";
+    document.getElementById("review-sync").textContent = sync ? sync.value : "—";
+    document.getElementById("review-content").textContent = content.join(", ") || "—";
+  }
+
+  document.querySelector(".wizard-connect-btn").addEventListener("click", (e) => {
+    e.target.hidden = true;
+    document.querySelector(".wizard-connected-note").hidden = false;
+  });
+
+  nextBtn.addEventListener("click", () => {
+    if (step < totalSteps) { step += 1; render(); }
+  });
+  backBtn.addEventListener("click", () => {
+    if (step > 1) { step -= 1; render(); }
+  });
+
+  document.getElementById("wizard-finish-btn").addEventListener("click", (e) => {
+    const btn = e.target;
+    btn.disabled = true;
+    btn.textContent = "Connecting…";
+    setTimeout(() => {
+      window.location.href = "{{ connector_detail_url }}?connected=1";
+    }, 900);
+  });
+
+  render();
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "knowledge_base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+
+<a href="/knowledge/home" class="back-link">← Knowledge Home</a>
+
+<div class="page-head">
+  <h1>Settings</h1>
+  <p class="page-sub">Company, languages, and data policies for the Knowledge Platform.</p>
+</div>
+
+<div class="settings-grid">
+  <div class="settings-card">
+    <h3>Company</h3>
+    <div class="settings-row"><span>Name</span><span>Hyderabad Luxury Villas Pvt Ltd</span></div>
+    <div class="settings-row"><span>Industry</span><span>Construction</span></div>
+    <div class="settings-row"><span>Location</span><span>Hyderabad, Telangana</span></div>
+  </div>
+
+  <div class="settings-card">
+    <h3>Languages</h3>
+    <p class="cell-muted" style="font-size:0.82rem; margin-top:0;">Primary: English. The same knowledge stays
+      shared across languages — ask in English, get answered in Telugu, or vice versa.</p>
+    <div class="suggestion-row" id="language-chips">
+      <span class="lang-toggle-chip" data-lang="Telugu">Telugu <button type="button" class="chip-remove" aria-label="Remove Telugu">×</button></span>
+      <span class="lang-toggle-chip" data-lang="Hindi">Hindi <button type="button" class="chip-remove" aria-label="Remove Hindi">×</button></span>
+    </div>
+    <div class="add-lang-row">
+      <select id="add-lang-select">
+        <option value="">+ Add a language…</option>
+        <option>Tamil</option>
+        <option>Kannada</option>
+        <option>Malayalam</option>
+        <option>Marathi</option>
+        <option>Bengali</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="settings-card">
+    <h3>Data retention</h3>
+    <div class="settings-row">
+      <span>Default retention</span>
+      <select id="retention-select" class="settings-select">
+        <option>30 days</option>
+        <option>90 days</option>
+        <option>1 year</option>
+        <option selected>Indefinite</option>
+      </select>
+    </div>
+    <div class="settings-row"><span>Legal hold</span><span>None active</span></div>
+    <div class="settings-row"><span>Deleted-source behaviour</span><span>Remove from index + embeddings</span></div>
+    <p class="inline-confirm" id="retention-confirm" hidden>✓ Saved</p>
+  </div>
+
+  <div class="settings-card">
+    <h3>AI processing</h3>
+    <div class="settings-row">
+      <span>General documents</span>
+      <button type="button" class="processing-toggle" data-mode="cloud">Cloud AI</button>
+    </div>
+    <div class="settings-row">
+      <span>HR documents</span>
+      <button type="button" class="processing-toggle" data-mode="local">Local / private</button>
+    </div>
+    <div class="settings-row"><span>Model</span><span>Model-agnostic — not locked to one vendor</span></div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  document.querySelectorAll(".chip-remove").forEach((btn) => {
+    btn.addEventListener("click", () => btn.closest(".lang-toggle-chip").remove());
+  });
+
+  document.getElementById("add-lang-select").addEventListener("change", (e) => {
+    const lang = e.target.value;
+    if (!lang) return;
+    const chip = document.createElement("span");
+    chip.className = "lang-toggle-chip";
+    chip.innerHTML = `${lang} <button type="button" class="chip-remove" aria-label="Remove ${lang}">×</button>`;
+    chip.querySelector(".chip-remove").addEventListener("click", () => chip.remove());
+    document.getElementById("language-chips").appendChild(chip);
+    e.target.value = "";
+  });
+
+  document.getElementById("retention-select").addEventListener("change", () => {
+    const el = document.getElementById("retention-confirm");
+    el.hidden = false;
+    setTimeout(() => { el.hidden = true; }, 2000);
+  });
+
+  document.querySelectorAll(".processing-toggle").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const toCloud = btn.dataset.mode === "local";
+      btn.dataset.mode = toCloud ? "cloud" : "local";
+      btn.textContent = toCloud ? "Cloud AI" : "Local / private";
+    });
+  });
+})();
+</script>
+{% endblock %}

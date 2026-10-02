@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Purchase Requests{% endblock %}
+{% block content %}
+
+<a href="/app/procurement" class="back-link">← Procurement</a>
+
+<div class="page-head">
+  <h1>Purchase Requests</h1>
+  <p class="page-sub">What your business needs, before it becomes an order.</p>
+</div>
+
+<div class="ai-create-card">
+  <span class="ai-answer-label">Create with AI</span>
+  <div class="ai-create-row">
+    <input type="text" id="pr-ai-input" placeholder="e.g. Need 100 bags cement for Villa 12 by Friday" value="Need 100 bags cement for Villa 12 by Friday">
+    <button type="button" class="btn btn-primary" id="pr-ai-parse-btn">Parse</button>
+  </div>
+  <div class="ai-create-result" id="pr-ai-result" hidden>
+    <div class="settings-row"><span>Material</span><span id="pr-result-material"></span></div>
+    <div class="settings-row"><span>Quantity</span><span id="pr-result-qty"></span></div>
+    <div class="settings-row"><span>Project</span><span id="pr-result-project"></span></div>
+    <div class="settings-row"><span>Required by</span><span id="pr-result-date"></span></div>
+    <div class="settings-row"><span>Estimated cost</span><span id="pr-result-cost"></span></div>
+    <button type="button" class="btn btn-primary" id="pr-ai-create-btn" style="margin-top:12px;">Create this purchase request</button>
+  </div>
+  <p class="inline-confirm" id="pr-ai-confirm" hidden></p>
+</div>
+
+<h2 class="block-title" style="margin-top:28px;">All requests</h2>
+<div class="table-card">
+  <table class="data-table">
+    <thead><tr><th>ID</th><th>Material</th><th>Project</th><th>Requester</th><th>Required</th><th>Est. cost</th><th>Status</th></tr></thead>
+    <tbody id="pr-tbody">
+      {% for pr in requests %}
+      <tr>
+        <td class="cell-strong"><a href="/app/procurement/requests/{{ pr.id }}" class="table-link">{{ pr.id }}</a></td>
+        <td>{{ pr.material }} ({{ pr.quantity }})</td>
+        <td>{{ pr.project }}</td>
+        <td>{{ pr.requester }}</td>
+        <td class="cell-mono">{{ pr.required_date }}</td>
+        <td class="cell-mono">₹{{ "{:,}".format(pr.estimated_cost) }}</td>
+        <td><span class="status-chip status-{{ pr.status|lower|replace(' ', '-') }}">{{ pr.status }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  const projects = ["Villa 12", "Villa 24", "Villa 31", "Villa 7", "Villa 18"];
+  const prices = { cement: 560, steel: 67000, electrical: 64000, paint: 180, tile: 85 };
+
+  function parseRequest(text) {
+    const lower = text.toLowerCase();
+    const qtyMatch = lower.match(/(\d+)\s*(bags?|tons?|lot|units?)?/);
+    const quantity = qtyMatch ? `${qtyMatch[1]} ${qtyMatch[2] || "units"}` : "1 lot";
+    let material = "Materials";
+    let unitPrice = 500;
+    if (lower.includes("cement")) { material = "Cement (OPC 53)"; unitPrice = prices.cement; }
+    else if (lower.includes("steel")) { material = "Steel reinforcement bars"; unitPrice = prices.steel; }
+    else if (lower.includes("electric")) { material = "Electrical fittings"; unitPrice = prices.electrical; }
+    else if (lower.includes("paint")) { material = "Paint"; unitPrice = prices.paint; }
+    else if (lower.includes("tile")) { material = "Tiles"; unitPrice = prices.tile; }
+
+    let project = projects.find((p) => lower.includes(p.toLowerCase())) || "Unassigned";
+    let dateLabel = "Not specified";
+    if (lower.includes("friday")) dateLabel = "This Friday";
+    else if (lower.includes("monday")) dateLabel = "Next Monday";
+    else if (lower.includes("tomorrow")) dateLabel = "Tomorrow";
+
+    const qtyNum = qtyMatch ? parseInt(qtyMatch[1], 10) : 1;
+    const cost = Math.round(qtyNum * unitPrice);
+
+    return { material, quantity, project, dateLabel, cost };
+  }
+
+  document.getElementById("pr-ai-parse-btn").addEventListener("click", () => {
+    const text = document.getElementById("pr-ai-input").value.trim();
+    if (!text) return;
+    const r = parseRequest(text);
+    document.getElementById("pr-result-material").textContent = r.material;
+    document.getElementById("pr-result-qty").textContent = r.quantity;
+    document.getElementById("pr-result-project").textContent = r.project;
+    document.getElementById("pr-result-date").textContent = r.dateLabel;
+    document.getElementById("pr-result-cost").textContent = "₹" + r.cost.toLocaleString("en-IN");
+    document.getElementById("pr-ai-result").hidden = false;
+    document.getElementById("pr-ai-confirm").hidden = true;
+    document.getElementById("pr-ai-create-btn").dataset.material = r.material;
+    document.getElementById("pr-ai-create-btn").dataset.quantity = r.quantity;
+    document.getElementById("pr-ai-create-btn").dataset.project = r.project;
+    document.getElementById("pr-ai-create-btn").dataset.cost = r.cost;
+  });
+
+  document.getElementById("pr-ai-create-btn").addEventListener("click", (e) => {
+    const btn = e.target;
+    const newId = "PR-" + Math.floor(100000 + Math.random() * 899999).toString().slice(0, 6);
+    const row = document.createElement("tr");
+    row.innerHTML = `<td class="cell-strong">${newId}</td>
+      <td>${btn.dataset.material} (${btn.dataset.quantity})</td>
+      <td>${btn.dataset.project}</td>
+      <td>Ravi Kumar</td>
+      <td class="cell-mono">—</td>
+      <td class="cell-mono">₹${Number(btn.dataset.cost).toLocaleString("en-IN")}</td>
+      <td><span class="status-chip status-pending">Pending Approval</span></td>`;
+    document.getElementById("pr-tbody").prepend(row);
+    document.getElementById("pr-ai-confirm").textContent = `✓ ${newId} created and sent for approval.`;
+    document.getElementById("pr-ai-confirm").hidden = false;
+    document.getElementById("pr-ai-result").hidden = true;
+  });
+})();
+</script>
+{% endblock %}

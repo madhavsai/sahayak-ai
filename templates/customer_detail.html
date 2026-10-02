@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{{ customer.name }}{% endblock %}
+{% block content %}
+
+<a href="/app/crm" class="back-link">← CRM</a>
+
+<div class="detail-head">
+  <div>
+    <h1>{{ customer.name }}</h1>
+    <p class="page-sub">{{ customer.status }}{% if customer.project %} · {{ customer.project }}{% endif %}</p>
+  </div>
+  {% if customer.outstanding %}
+  <div class="detail-stat detail-stat-alert">
+    <span>Outstanding</span>
+    <strong>₹{{ "{:,}".format(customer.outstanding) }}</strong>
+  </div>
+  {% endif %}
+</div>
+
+<div class="detail-tabs">
+  <span class="detail-tab is-active">Overview</span>
+  <span class="detail-tab">Conversations</span>
+  <span class="detail-tab">Projects</span>
+  <span class="detail-tab">Invoices</span>
+  <span class="detail-tab">Documents</span>
+  <span class="detail-tab">Timeline</span>
+</div>
+
+<div class="ai-ask-panel">
+  <span class="ai-ask-label">Ask AI about this customer</span>
+  <div class="ai-ask-examples">
+    <span class="ai-ask-chip">What did they promise to pay?</span>
+    <span class="ai-ask-chip">When did we last speak?</span>
+    <span class="ai-ask-chip">What issues are unresolved?</span>
+  </div>
+  <p class="section-footnote">Not wired up yet — this panel shows the intended interaction, not a live answer.</p>
+</div>
+
+{% if project %}
+<h2 class="block-title">Linked project</h2>
+<a href="/app/projects/{{ project.id }}" class="project-mini-card">
+  <span class="cell-strong">{{ project.name }}</span>
+  <span class="cell-muted">{{ project.location }}</span>
+  <span class="status-chip status-{{ project.health|lower|replace(' ', '-') }}">{{ project.health }}</span>
+</a>
+{% endif %}
+
+{% endblock %}

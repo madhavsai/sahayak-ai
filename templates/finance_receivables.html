@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Receivables{% endblock %}
+{% block content %}
+
+<a href="/app/finance" class="back-link">← Finance</a>
+
+<div class="page-head">
+  <h1>Receivables</h1>
+  <p class="page-sub">What customers owe, by age.</p>
+</div>
+
+<div class="aging-row">
+  {% for bucket in aging %}
+  <div class="aging-card {{ 'aging-card-alert' if bucket.bucket not in ['Current', '1-30 days'] and bucket.amount > 0 else '' }}">
+    <span class="health-label">{{ bucket.bucket }}</span>
+    <span class="health-value" style="font-size:1.1rem;">₹{{ "{:,}".format(bucket.amount) }}</span>
+  </div>
+  {% endfor %}
+</div>
+
+<h2 class="block-title" style="margin-top:32px;">Collections</h2>
+{% for c in collections %}
+<div class="approval-card" style="margin-bottom:16px;" id="collection-{{ loop.index0 }}">
+  <div class="match-card-head">
+    <div>
+      <span class="cell-strong">{{ c.customer }}</span>
+      <span class="cell-muted" style="margin-left:8px;">{{ c.invoice }} · ₹{{ "{:,}".format(c.amount) }} · {{ c.days_overdue }} days overdue</span>
+    </div>
+  </div>
+  <p class="cell-muted">Last contact: {{ c.last_contact }}</p>
+  <p class="cell-muted" style="font-style:italic;">"{{ c.promise }}"</p>
+  <p style="font-weight:600; margin-top:8px;">Suggested: {{ c.suggested_action }}</p>
+  <div class="suggestion-row" style="margin-top:12px;">
+    <button type="button" class="suggestion-chip collection-action" data-action="whatsapp">Send WhatsApp</button>
+    <button type="button" class="suggestion-chip collection-action" data-action="call">Call</button>
+    <button type="button" class="suggestion-chip collection-action" data-action="followup">Schedule follow-up</button>
+    <button type="button" class="suggestion-chip collection-action" data-action="promise">Record payment promise</button>
+  </div>
+  <p class="inline-confirm" hidden></p>
+</div>
+{% endfor %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  document.querySelectorAll(".collection-action").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".approval-card");
+      const confirmEl = card.querySelector(".inline-confirm");
+      const messages = {
+        whatsapp: "✓ WhatsApp follow-up sent (requires approval policy — logged).",
+        call: "✓ Call logged as initiated.",
+        followup: "✓ Follow-up scheduled for 3 days from now.",
+        promise: "✓ Payment promise recorded.",
+      };
+      confirmEl.textContent = messages[btn.dataset.action];
+      confirmEl.hidden = false;
+    });
+  });
+})();
+</script>
+{% endblock %}

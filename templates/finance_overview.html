@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Finance{% endblock %}
+{% block content %}
+
+<a href="/app/home" class="back-link">← Home</a>
+
+<div class="page-head-row">
+  <div class="page-head">
+    <h1>Financial Overview</h1>
+    <p class="page-sub">Understand cash, commitments, and money that needs attention.</p>
+  </div>
+  <div class="quick-actions">
+    <a href="/app/finance/invoices" class="qa-btn">Sales Invoices</a>
+    <a href="/app/finance/receivables" class="qa-btn">Receivables</a>
+    <a href="/app/finance/payables" class="qa-btn">Payables</a>
+    <a href="/app/approvals" class="qa-btn">Approvals</a>
+  </div>
+</div>
+
+<section class="home-block">
+  <div class="health-grid">
+    <div class="health-card"><span class="health-label">Revenue (YTD)</span><span class="health-value">₹{{ "{:,}".format(m.revenue_ytd) }}</span></div>
+    <div class="health-card"><span class="health-label">Receivables</span><span class="health-value">₹{{ "{:,}".format(m.receivables) }}</span></div>
+    <div class="health-card"><span class="health-label">Payables</span><span class="health-value">₹{{ "{:,}".format(m.payables) }}</span></div>
+    <div class="health-card"><span class="health-label">Cash position</span><span class="health-value">₹{{ "{:,}".format(m.cash_position) }}</span></div>
+    <div class="health-card"><span class="health-label">Overdue receivables</span><span class="health-value">₹{{ "{:,}".format(m.overdue_receivables) }}</span></div>
+    <div class="health-card"><span class="health-label">Upcoming payments</span><span class="health-value">₹{{ "{:,}".format(m.upcoming_payments) }}</span></div>
+    <div class="health-card"><span class="health-label">Monthly expenses</span><span class="health-value">₹{{ "{:,}".format(m.monthly_expenses) }}</span></div>
+  </div>
+</section>
+
+<section class="home-block">
+  <h2 class="block-title">Cash position — next 30 days</h2>
+  <div class="cashflow-strip">
+    <div class="cashflow-step"><span class="health-label">Opening</span><span class="health-value" style="font-size:1.1rem;">₹{{ "{:,}".format(cash.opening_balance) }}</span></div>
+    <span class="pipeline-arrow">+</span>
+    <div class="cashflow-step"><span class="health-label">Expected in</span><span class="health-value" style="font-size:1.1rem; color:var(--color-success-text);">₹{{ "{:,}".format(cash.expected_receipts_30d) }}</span></div>
+    <span class="pipeline-arrow">−</span>
+    <div class="cashflow-step"><span class="health-label">Expected out</span><span class="health-value" style="font-size:1.1rem; color:var(--color-accent);">₹{{ "{:,}".format(cash.expected_payments_30d) }}</span></div>
+    <span class="pipeline-arrow">=</span>
+    <div class="cashflow-step cashflow-step-total"><span class="health-label">Projected</span><span class="health-value" style="font-size:1.2rem;">₹{{ "{:,}".format(cash.opening_balance + cash.expected_receipts_30d - cash.expected_payments_30d) }}</span></div>
+  </div>
+</section>
+
+<section class="home-block">
+  <h2 class="block-title">Alerts</h2>
+  <ul class="insight-list">
+    {% for a in alerts %}<li class="insight-item">{{ a }}</li>{% endfor %}
+  </ul>
+</section>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "knowledge_base.html" %}
+{% block title %}Entities{% endblock %}
+{% block content %}
+
+<a href="/knowledge/home" class="back-link">← Knowledge Home</a>
+
+<div class="page-head">
+  <h1>Entities</h1>
+  <p class="page-sub">People, companies, projects, and vendors — automatically recognized across everything connected.</p>
+</div>
+
+<div class="table-card">
+  <table class="data-table">
+    <thead><tr><th>Name</th><th>Type</th><th>Role</th><th>Projects</th><th></th></tr></thead>
+    <tbody>
+      {% for key, e in entities.items() %}
+      <tr>
+        <td class="cell-strong">{{ e.name }}</td>
+        <td>{{ e.type }}</td>
+        <td>{{ e.role }}</td>
+        <td>{{ e.projects|join(", ") }}</td>
+        <td><a href="/knowledge/entities/{{ key }}" class="table-link">View →</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<p class="section-footnote">Entity resolution (merging "Ramesh" / "Ramesh Kumar" / a phone number into one identity) and the full graph view aren't wired up yet — these are two seeded example entities.</p>
+
+{% endblock %}

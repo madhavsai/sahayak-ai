@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}People{% endblock %}
+{% block content %}
+
+<a href="/app/home" class="back-link">← Home</a>
+
+<div class="page-head-row">
+  <div class="page-head">
+    <h1>People</h1>
+    <p class="page-sub">Understand who is working on what, where help is needed, and what requires attention.</p>
+  </div>
+  <div class="quick-actions">
+    <a href="/app/people/employees" class="qa-btn">All Employees</a>
+    <a href="/app/people/leave" class="qa-btn">Leave</a>
+    <a href="/app/approvals" class="qa-btn">Approvals</a>
+  </div>
+</div>
+
+<section class="home-block">
+  <div class="health-grid">
+    <div class="health-card"><span class="health-label">Employees</span><span class="health-value">{{ m.employees }}</span></div>
+    <div class="health-card"><span class="health-label">Active</span><span class="health-value">{{ m.active }}</span></div>
+    <div class="health-card"><span class="health-label">On leave</span><span class="health-value">{{ m.on_leave }}</span></div>
+    <div class="health-card"><span class="health-label">Open tasks</span><span class="health-value">{{ m.open_tasks }}</span></div>
+    <div class="health-card health-card-alert"><span class="health-label">Overdue tasks</span><span class="health-value">{{ m.overdue_tasks }}</span></div>
+    <div class="health-card"><span class="health-label">Projects</span><span class="health-value">{{ m.projects }}</span></div>
+    <div class="health-card"><span class="health-label">Pending approvals</span><span class="health-value">{{ m.pending_approvals }}</span></div>
+  </div>
+</section>
+
+<section class="home-block">
+  <h2 class="block-title">Team workload</h2>
+  <div class="table-card">
+    <table class="data-table">
+      <thead><tr><th>Employee</th><th>Department</th><th>Open tasks</th><th>Projects</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for e in employees %}
+        <tr>
+          <td class="cell-strong"><a href="/app/people/employees/{{ e.name|urlencode }}" class="table-link">{{ e.name }}</a></td>
+          <td>{{ e.detail.department }}</td>
+          <td class="cell-mono">{{ e.detail.open_tasks }}</td>
+          <td>{{ (e.projects or [])|join(", ") or "—" }}</td>
+          <td><span class="status-chip status-{{ 'active' if e.detail.status == 'Active' else 'pending' }}">{{ e.detail.status }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% endblock %}

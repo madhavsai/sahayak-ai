@@ -1,0 +1,77 @@
+{% extends "knowledge_base.html" %}
+{% block title %}Collections{% endblock %}
+{% block content %}
+
+<a href="/knowledge/home" class="back-link">← Knowledge Home</a>
+
+<div class="page-head">
+  <h1>Collections</h1>
+  <p class="page-sub">Organize knowledge into views — without moving or copying the source files.</p>
+</div>
+
+<div class="collection-grid" id="collection-grid">
+  {% for c in collections %}
+  <a href="/knowledge/library" class="collection-card">
+    <span class="collection-icon">{{ c.icon }}</span>
+    <h3>{{ c.name }}</h3>
+    <p class="cell-muted" style="font-size:0.84rem;">{{ c.rule }}</p>
+    <span class="collection-count">{{ "{:,}".format(c.item_count) }} items</span>
+  </a>
+  {% endfor %}
+
+  <button type="button" class="collection-card collection-card-new" id="new-collection-btn">
+    <span class="collection-icon">+</span>
+    <h3>New collection</h3>
+    <p class="cell-muted" style="font-size:0.84rem;">Name it, describe it, and set a rule — or add items manually.</p>
+  </button>
+</div>
+
+<div class="wizard-card" id="new-collection-form" style="max-width:420px; margin-top:16px;" hidden>
+  <h2 class="block-title">New collection</h2>
+  <label class="form-row" style="display:block; margin-bottom:12px;">
+    <span style="display:block; font-weight:600; margin-bottom:6px; font-size:0.88rem;">Name</span>
+    <input type="text" id="new-collection-name" placeholder="e.g. Villa 24 Documents" style="width:100%; min-height:42px; padding:8px 12px; border:1.5px solid var(--color-rule); border-radius:6px; background:var(--color-paper);">
+  </label>
+  <label class="form-row" style="display:block; margin-bottom:16px;">
+    <span style="display:block; font-weight:600; margin-bottom:6px; font-size:0.88rem;">Rule (optional)</span>
+    <input type="text" id="new-collection-rule" placeholder="e.g. Project = Villa 24" style="width:100%; min-height:42px; padding:8px 12px; border:1.5px solid var(--color-rule); border-radius:6px; background:var(--color-paper);">
+  </label>
+  <div style="display:flex; gap:10px;">
+    <button type="button" class="btn btn-primary" id="create-collection-confirm">Create</button>
+    <button type="button" class="btn btn-ghost" id="create-collection-cancel">Cancel</button>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  const newBtn = document.getElementById("new-collection-btn");
+  const form = document.getElementById("new-collection-form");
+  const grid = document.getElementById("collection-grid");
+
+  newBtn.addEventListener("click", () => {
+    form.hidden = !form.hidden;
+    if (!form.hidden) document.getElementById("new-collection-name").focus();
+  });
+  document.getElementById("create-collection-cancel").addEventListener("click", () => { form.hidden = true; });
+
+  document.getElementById("create-collection-confirm").addEventListener("click", () => {
+    const name = document.getElementById("new-collection-name").value.trim();
+    if (!name) return;
+    const rule = document.getElementById("new-collection-rule").value.trim() || "Manual additions";
+    const card = document.createElement("a");
+    card.href = "/knowledge/library";
+    card.className = "collection-card";
+    card.innerHTML = `<span class="collection-icon">\u{1F4C1}</span><h3>${name}</h3>
+      <p class="cell-muted" style="font-size:0.84rem;">${rule}</p>
+      <span class="collection-count">0 items</span>`;
+    grid.insertBefore(card, newBtn);
+    document.getElementById("new-collection-name").value = "";
+    document.getElementById("new-collection-rule").value = "";
+    form.hidden = true;
+  });
+})();
+</script>
+{% endblock %}

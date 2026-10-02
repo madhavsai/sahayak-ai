@@ -1,0 +1,94 @@
+{% extends "knowledge_base.html" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+
+<a href="/knowledge/home" class="back-link">← Knowledge Home</a>
+
+<div class="search-hero">
+  <h1>Search or ask anything</h1>
+  <form action="/knowledge/search" method="get" class="search-hero-form">
+    <input type="text" name="q" value="{{ query or '' }}" placeholder="Search your business or ask anything..." autofocus>
+    <button type="submit" class="btn btn-primary">{% if query %}Search{% else %}Ask{% endif %}</button>
+  </form>
+
+  {% if not query %}
+  <div class="suggestion-row" style="justify-content:center; margin-top:16px;">
+    {% for s in suggestions %}
+    <a href="/knowledge/search?q={{ s|urlencode }}" class="suggestion-chip">{{ s }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+
+{% if query and answer %}
+<div class="ai-answer-card">
+  <span class="ai-answer-label">AI answer</span>
+  <p class="ai-answer-text">{{ answer.answer }}</p>
+
+  <span class="ai-answer-sources-label">Sources</span>
+  <div class="citation-list">
+    {% for s in answer.sources %}
+    <div class="citation-card">
+      <span class="citation-source-icon">{{ s.source[0] }}</span>
+      <div>
+        <span class="cell-strong" style="display:block;">{{ s.title }}</span>
+        <span class="cell-muted" style="font-size:0.82rem;">{{ s.detail }}</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <span class="ai-answer-sources-label">Follow-up questions</span>
+  <div class="suggestion-row">
+    {% for f in answer.followups %}
+    <a href="/knowledge/search?q={{ f|urlencode }}" class="suggestion-chip">{{ f }}</a>
+    {% endfor %}
+  </div>
+</div>
+{% elif query %}
+<div class="ai-answer-card">
+  <span class="ai-answer-label">No authoritative answer found</span>
+  <p class="cell-muted">I couldn't find enough connected information to answer this confidently. This could mean
+    the source isn't connected yet, the information isn't indexed, or it's worded differently than what's stored.</p>
+  <div class="suggestion-row">
+    <a href="/knowledge/connectors" class="suggestion-chip">Connect a source</a>
+    <a href="/knowledge/capture" class="suggestion-chip">Upload a document</a>
+    <button type="button" class="suggestion-chip" id="ask-owner-btn">Ask the owner</button>
+  </div>
+  <p class="inline-confirm" id="ask-owner-confirm" hidden>✓ Sent to Ravi Kumar (Owner) — you'll be notified when they reply.</p>
+</div>
+
+<h2 class="block-title" style="margin-top:28px;">Related results</h2>
+<div class="table-card">
+  <table class="data-table">
+    <thead><tr><th>Title</th><th>Type</th><th>Source</th><th>Updated</th></tr></thead>
+    <tbody>
+      {% for item in library[:4] %}
+      <tr>
+        <td class="cell-strong">{{ item.title }}</td>
+        <td>{{ item.type }}</td>
+        <td><span class="lang-chip">{{ item.source }}</span></td>
+        <td class="cell-mono">{{ item.updated }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  const btn = document.getElementById("ask-owner-btn");
+  if (btn) {
+    btn.addEventListener("click", () => {
+      btn.disabled = true;
+      btn.textContent = "Sent ✓";
+      document.getElementById("ask-owner-confirm").hidden = false;
+    });
+  }
+})();
+</script>
+{% endblock %}

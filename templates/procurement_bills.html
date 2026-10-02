@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Bills{% endblock %}
+{% block content %}
+
+<a href="/app/procurement" class="back-link">← Procurement</a>
+
+<div class="page-head">
+  <h1>Bills</h1>
+  <p class="page-sub">Matched automatically against the purchase order and goods receipt.</p>
+</div>
+
+{% for b in bills %}
+<div class="match-card">
+  <div class="match-card-head">
+    <div>
+      <span class="cell-strong">{{ b.bill }}</span> — {{ b.vendor }}
+      <span class="cell-muted" style="margin-left:8px;">{{ b.po }} · {{ b.project }}</span>
+    </div>
+    <span class="status-chip status-{{ 'active' if b.match_status == 'Matched' else 'overdue' }}">{{ b.match_status }}</span>
+  </div>
+  <div class="match-row">
+    <div class="match-col"><span class="health-label">PO</span><span class="health-value" style="font-size:1.1rem;">₹{{ "{:,}".format(b.po_amount) }}</span></div>
+    <div class="match-col"><span class="health-label">Goods received</span><span class="health-value" style="font-size:1.1rem;">₹{{ "{:,}".format(b.grn_amount) }}</span></div>
+    <div class="match-col"><span class="health-label">Invoice</span><span class="health-value" style="font-size:1.1rem;">₹{{ "{:,}".format(b.bill_amount) }}</span></div>
+  </div>
+  {% if b.match_status == "Mismatch" %}
+  <p class="cell-muted" style="color:var(--color-accent); font-weight:600;">
+    ₹{{ "{:,}".format(b.bill_amount - b.grn_amount) }} billed but not yet confirmed as received.
+  </p>
+  <div class="suggestion-row">
+    <button type="button" class="suggestion-chip mismatch-btn" data-action="hold">Hold</button>
+    <button type="button" class="suggestion-chip mismatch-btn" data-action="exception">Approve with exception</button>
+    <button type="button" class="suggestion-chip mismatch-btn" data-action="correction">Request correction</button>
+  </div>
+  <p class="inline-confirm" hidden></p>
+  {% else %}
+  <button type="button" class="btn btn-ghost approve-bill-btn">Approve for payment</button>
+  <p class="inline-confirm" hidden></p>
+  {% endif %}
+</div>
+{% endfor %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  document.querySelectorAll(".mismatch-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".match-card");
+      const confirmEl = card.querySelector(".inline-confirm");
+      const messages = { hold: "✓ Payment held pending review.", exception: "✓ Approved with exception — logged for audit.", correction: "✓ Correction requested from vendor." };
+      confirmEl.textContent = messages[btn.dataset.action];
+      confirmEl.hidden = false;
+      card.querySelectorAll(".mismatch-btn").forEach((b) => (b.disabled = true));
+    });
+  });
+  document.querySelectorAll(".approve-bill-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const confirmEl = btn.nextElementSibling;
+      confirmEl.textContent = "✓ Approved — payment scheduled.";
+      confirmEl.hidden = false;
+      btn.disabled = true;
+    });
+  });
+})();
+</script>
+{% endblock %}

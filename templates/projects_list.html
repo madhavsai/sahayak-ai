@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Projects{% endblock %}
+{% block content %}
+
+<a href="/app/home" class="back-link">← Home</a>
+
+<div class="page-head">
+  <h1>Projects</h1>
+  <p class="page-sub">{{ projects|selectattr("active")|list|length }} active, {{ projects|length }} total.</p>
+</div>
+
+<div class="project-grid">
+  {% for p in projects %}
+  <a href="/app/projects/{{ p.id }}" class="project-card">
+    <div class="project-card-top">
+      <h3>{{ p.name }}</h3>
+      <span class="status-chip status-{{ p.health|lower|replace(' ', '-') }}">{{ p.health }}</span>
+    </div>
+    <p class="cell-muted">{{ p.location }} · {{ p.client }}</p>
+    <div class="progress-bar">
+      <div class="progress-fill" style="width: {{ p.progress }}%"></div>
+    </div>
+    <div class="project-card-foot">
+      <span>{{ p.progress }}% complete</span>
+      <span class="cell-mono">₹{{ "{:,}".format(p.spent) }} / ₹{{ "{:,}".format(p.budget) }}</span>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+
+{% endblock %}

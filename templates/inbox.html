@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Inbox{% endblock %}
+{% block content %}
+
+<a href="/app/home" class="back-link">← Home</a>
+
+<div class="page-head">
+  <h1>Inbox</h1>
+  <p class="page-sub">Every call, WhatsApp message, and email in one place.</p>
+</div>
+
+<div class="inbox-tabs">
+  <span class="inbox-tab is-active">All</span>
+  <span class="inbox-tab">WhatsApp</span>
+  <span class="inbox-tab">Calls</span>
+  <span class="inbox-tab">Email</span>
+</div>
+
+<div class="table-card">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Contact</th>
+        <th>Channel</th>
+        <th>Project</th>
+        <th>Language</th>
+        <th>Last message</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in conversations %}
+      <tr>
+        <td class="cell-strong">{{ c.contact }}</td>
+        <td>{{ c.channel }}</td>
+        <td>{{ c.project or "—" }}</td>
+        <td><span class="lang-chip">{{ c.language }}</span></td>
+        <td class="cell-muted">{{ c.preview }}</td>
+        <td><span class="status-chip status-{{ c.status|lower|replace(' ', '-') }}">{{ c.status }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<p class="section-footnote">Replying, auto-drafting, and AI summarization aren't wired up yet in this build — this view shows real seeded conversation records, not live WhatsApp/call data.</p>
+
+{% endblock %}

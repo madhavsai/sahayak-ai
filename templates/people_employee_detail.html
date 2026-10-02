@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}{{ employee.name }}{% endblock %}
+{% block content %}
+
+<a href="/app/people/employees" class="back-link">← Employees</a>
+
+<div class="detail-head">
+  <div>
+    <h1>{{ employee.name }}</h1>
+    <p class="page-sub">{{ employee.role }} · {{ employee.detail.department }} · reports to {{ employee.detail.manager }}</p>
+  </div>
+  <span class="status-chip status-chip-lg status-{{ 'active' if employee.detail.status == 'Active' else 'pending' }}">{{ employee.detail.status }}</span>
+</div>
+
+<div class="detail-tabs">
+  <span class="detail-tab is-active">Overview</span>
+  <span class="detail-tab">Tasks</span>
+  <span class="detail-tab">Projects</span>
+  <span class="detail-tab">Expenses</span>
+  <span class="detail-tab">Leave</span>
+  <span class="detail-tab">Documents</span>
+</div>
+
+<div class="health-grid">
+  <div class="health-card"><span class="health-label">Location</span><span class="health-value" style="font-size:1rem;">{{ employee.detail.location }}</span></div>
+  <div class="health-card"><span class="health-label">Open tasks</span><span class="health-value" style="font-size:1rem;">{{ employee.detail.open_tasks }}</span></div>
+  <div class="health-card"><span class="health-label">Contact</span><span class="health-value" style="font-size:0.85rem;">{{ employee.detail.contact }}</span></div>
+</div>
+
+<h2 class="block-title" style="margin-top:28px;">Currently working on</h2>
+{% if employee.projects %}
+<div class="suggestion-row">
+  {% for p in employee.projects %}<span class="related-tag">{{ p }}</span>{% endfor %}
+</div>
+{% else %}
+<p class="cell-muted">No active project assignments.</p>
+{% endif %}
+
+<h2 class="block-title" style="margin-top:24px;">Open tasks</h2>
+{% if tasks %}
+<div class="table-card">
+  <table class="data-table">
+    <thead><tr><th>Task</th><th>Project</th><th>Due</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for t in tasks %}
+      <tr>
+        <td class="cell-strong">{{ t.title }}</td>
+        <td>{{ t.project or "—" }}</td>
+        <td class="cell-mono">{{ t.due }}</td>
+        <td><span class="status-chip status-{{ t.status }}">{{ t.status }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="cell-muted">No open tasks.</p>
+{% endif %}
+
+<div class="ai-ask-panel" style="margin-top:24px;">
+  <span class="ai-ask-label">Ask AI about {{ employee.name.split(" ")[0] }}</span>
+  <div class="ai-ask-examples">
+    <span class="ai-ask-chip">What is {{ employee.name.split(" ")[0] }} currently working on?</span>
+    <span class="ai-ask-chip">Any pending approvals?</span>
+  </div>
+</div>
+
+{% endblock %}

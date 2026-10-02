@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Procurement{% endblock %}
+{% block content %}
+
+<a href="/app/home" class="back-link">← Home</a>
+
+<div class="page-head-row">
+  <div class="page-head">
+    <h1>Procurement</h1>
+    <p class="page-sub">Know what your business needs, what has been ordered, and what is still pending.</p>
+  </div>
+  <div class="quick-actions">
+    <a href="/app/procurement/requests" class="qa-btn">Purchase Requests</a>
+    <a href="/app/procurement/orders" class="qa-btn">Purchase Orders</a>
+    <a href="/app/procurement/goods-receipt" class="qa-btn">Receive Material</a>
+    <a href="/app/procurement/bills" class="qa-btn">Bills</a>
+    <a href="/app/vendors" class="qa-btn">Vendors</a>
+  </div>
+</div>
+
+<section class="home-block">
+  <div class="health-grid">
+    <div class="health-card"><span class="health-label">Purchase requests</span><span class="health-value">{{ m.purchase_requests }}</span></div>
+    <div class="health-card"><span class="health-label">Pending approval</span><span class="health-value">{{ m.pending_approval }}</span></div>
+    <div class="health-card"><span class="health-label">Open RFQs</span><span class="health-value">{{ m.open_rfqs }}</span></div>
+    <div class="health-card"><span class="health-label">Purchase orders</span><span class="health-value">{{ m.purchase_orders }}</span></div>
+    <div class="health-card"><span class="health-label">Awaiting delivery</span><span class="health-value">{{ m.awaiting_delivery }}</span></div>
+    <div class="health-card"><span class="health-label">Bills pending</span><span class="health-value">{{ m.bills_pending }}</span></div>
+    <div class="health-card"><span class="health-label">Overdue payments</span><span class="health-value">₹{{ "{:,}".format(m.overdue_payments) }}</span></div>
+  </div>
+</section>
+
+<section class="home-block">
+  <h2 class="block-title">Alerts</h2>
+  <ul class="insight-list">
+    {% for a in alerts %}<li class="insight-item">{{ a }}</li>{% endfor %}
+  </ul>
+</section>
+
+<section class="home-block">
+  <h2 class="block-title">Pipeline</h2>
+  <div class="pipeline-stage-row">
+    {% for p in pipeline %}
+    <div class="pipeline-stage-card">
+      <span class="pipeline-stage-count">{{ p.count }}</span>
+      <span class="pipeline-stage-name">{{ p.stage }}</span>
+      <span class="pipeline-stage-value">₹{{ "{:,}".format(p.value) }}</span>
+    </div>
+    {% if not loop.last %}<span class="pipeline-arrow">→</span>{% endif %}
+    {% endfor %}
+  </div>
+</section>
+
+{% endblock %}

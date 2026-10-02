@@ -1,0 +1,127 @@
+{% extends "knowledge_base.html" %}
+{% block title %}Data Quality{% endblock %}
+{% block content %}
+
+<a href="/knowledge/home" class="back-link">← Knowledge Home</a>
+
+<div class="page-head">
+  <h1>Data Quality</h1>
+  <p class="page-sub">What needs attention before you can fully trust an AI answer.</p>
+</div>
+
+<div class="dq-grid">
+  <div class="dq-card"><span class="dq-value">{{ dq.duplicate_content }}</span><span class="dq-label">Duplicate content</span></div>
+  <div class="dq-card dq-card-alert"><span class="dq-value">{{ dq.conflicting_information }}</span><span class="dq-label">Conflicting information</span></div>
+  <div class="dq-card"><span class="dq-value">{{ dq.stale_content }}</span><span class="dq-label">Stale content</span></div>
+  <div class="dq-card"><span class="dq-value">{{ dq.missing_metadata }}</span><span class="dq-label">Missing metadata</span></div>
+  <div class="dq-card"><span class="dq-value">{{ dq.unknown_owner }}</span><span class="dq-label">Unknown owner</span></div>
+  <div class="dq-card dq-card-alert"><span class="dq-value">{{ dq.permission_mismatch }}</span><span class="dq-label">Permission mismatch</span></div>
+  <div class="dq-card"><span class="dq-value">{{ dq.low_quality_ocr }}</span><span class="dq-label">Low-quality OCR</span></div>
+  <div class="dq-card"><span class="dq-value">{{ dq.low_confidence_extraction }}</span><span class="dq-label">Low-confidence extraction</span></div>
+  <div class="dq-card"><span class="dq-value">{{ dq.unmapped_identity }}</span><span class="dq-label">Unmapped identity</span></div>
+</div>
+
+<h2 class="block-title" style="margin-top:32px;">Conflicting information</h2>
+{% for c in conflicts %}
+<div class="conflict-card" id="conflict-card-{{ loop.index0 }}">
+  <span class="ai-answer-label">{{ c.topic }}</span>
+  <div class="conflict-pair">
+    <div class="conflict-side" data-choice="a">
+      <span class="cell-strong">{{ c.doc_a.title }}</span>
+      <span class="conflict-value">{{ c.doc_a.value }}</span>
+    </div>
+    <div class="conflict-side" data-choice="b">
+      <span class="cell-strong">{{ c.doc_b.title }}</span>
+      <span class="conflict-value">{{ c.doc_b.value }}</span>
+    </div>
+  </div>
+  <div class="suggestion-row conflict-actions" style="margin-top:12px;">
+    <button type="button" class="suggestion-chip" data-resolve="a">Choose A</button>
+    <button type="button" class="suggestion-chip" data-resolve="b">Choose B</button>
+    <button type="button" class="suggestion-chip" data-resolve="both">Mark both</button>
+    <button type="button" class="suggestion-chip" data-resolve="task">Create resolution task</button>
+  </div>
+  <p class="inline-confirm" hidden></p>
+</div>
+{% endfor %}
+
+<h2 class="block-title" style="margin-top:32px;">Stale content — review recommended</h2>
+<div class="table-card" id="stale-table-card">
+  <table class="data-table">
+    <thead><tr><th>Item</th><th>Owner</th><th>Last updated</th><th>Age</th><th></th></tr></thead>
+    <tbody id="stale-tbody">
+      {% for s in stale %}
+      <tr>
+        <td class="cell-strong">{{ s.title }}</td>
+        <td>{{ s.owner }}</td>
+        <td class="cell-mono">{{ s.last_updated }}</td>
+        <td><span class="status-chip status-pending">{{ s.age }}</span></td>
+        <td><button type="button" class="table-link mark-reviewed-btn">Mark reviewed</button></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<p class="cell-muted" id="stale-empty" hidden style="margin-top:12px;">All caught up.</p>
+
+<h2 class="block-title" style="margin-top:32px;">Knowledge gaps</h2>
+<div class="table-card">
+  <table class="data-table">
+    <thead><tr><th>Question</th><th>Times asked</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for g in gaps %}
+      <tr>
+        <td class="cell-strong">{{ g.question }}</td>
+        <td class="cell-mono">{{ g.times_asked }}</td>
+        <td><span class="status-chip status-overdue">{{ g.confidence }}</span></td>
+        <td>
+          <a href="/knowledge/capture" class="table-link">Upload doc →</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  document.querySelectorAll(".conflict-actions button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".conflict-card");
+      const choice = btn.dataset.resolve;
+      card.querySelectorAll(".conflict-side").forEach((side) => {
+        side.classList.toggle("conflict-side-chosen", choice === "both" || side.dataset.choice === choice);
+        side.classList.toggle("conflict-side-rejected", choice !== "both" && choice !== "task" && side.dataset.choice !== choice);
+      });
+      const confirmEl = card.querySelector(".inline-confirm");
+      const messages = {
+        a: "✓ Marked Document A as authoritative.",
+        b: "✓ Marked Document B as authoritative.",
+        both: "✓ Both kept — flagged as context-dependent, not a true conflict.",
+        task: "✓ Resolution task created for Lakshmi Prasad.",
+      };
+      confirmEl.textContent = messages[choice];
+      confirmEl.hidden = false;
+      card.querySelectorAll("button").forEach((b) => (b.disabled = true));
+    });
+  });
+
+  document.querySelectorAll(".mark-reviewed-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const row = btn.closest("tr");
+      row.style.opacity = "0.4";
+      btn.textContent = "Reviewed ✓";
+      btn.disabled = true;
+      const remaining = document.querySelectorAll("#stale-tbody tr:not([style*='opacity'])").length;
+      if (remaining === 0) {
+        document.getElementById("stale-table-card").hidden = true;
+        document.getElementById("stale-empty").hidden = false;
+      }
+    });
+  });
+})();
+</script>
+{% endblock %}

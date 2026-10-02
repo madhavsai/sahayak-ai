@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Employees{% endblock %}
+{% block content %}
+
+<a href="/app/people" class="back-link">← People</a>
+
+<div class="page-head">
+  <h1>Employees</h1>
+  <p class="page-sub">{{ employees|length }} people across {{ employees|map(attribute="detail")|map(attribute="department")|unique|list|length }} departments.</p>
+</div>
+
+<div class="table-card">
+  <table class="data-table">
+    <thead><tr><th>Name</th><th>Role</th><th>Department</th><th>Manager</th><th>Projects</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for e in employees %}
+      <tr>
+        <td class="cell-strong"><a href="/app/people/employees/{{ e.name|urlencode }}" class="table-link">{{ e.name }}</a></td>
+        <td>{{ e.role }}</td>
+        <td>{{ e.detail.department }}</td>
+        <td>{{ e.detail.manager }}</td>
+        <td>{{ (e.projects or [])|join(", ") or "—" }}</td>
+        <td><span class="status-chip status-{{ 'active' if e.detail.status == 'Active' else 'pending' }}">{{ e.detail.status }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

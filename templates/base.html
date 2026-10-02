@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Sahayak AI{% endblock %} — App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/app-static/app.css">
+</head>
+<body class="app-body">
+
+<div class="app-shell">
+
+  <aside class="app-sidebar">
+    <a href="/app/home" class="app-brand">Sahayak <span>AI</span></a>
+    <nav class="app-nav">
+      <p class="nav-section-label">Overview</p>
+      <a href="/app/home" class="nav-item {{ 'is-active' if active=='home' else '' }}">Home</a>
+      <a href="/app/inbox" class="nav-item {{ 'is-active' if active=='inbox' else '' }}">Inbox</a>
+
+      <p class="nav-section-label">Work</p>
+      <a href="/app/crm" class="nav-item {{ 'is-active' if active=='crm' else '' }}">CRM</a>
+      <a href="/app/projects" class="nav-item {{ 'is-active' if active=='projects' else '' }}">Projects</a>
+      <a href="/app/tasks" class="nav-item {{ 'is-active' if active=='tasks' else '' }}">Tasks</a>
+      <a href="/app/vendors" class="nav-item {{ 'is-active' if active=='vendors' else '' }}">Vendors</a>
+      <a href="/app/approvals" class="nav-item nav-item-accent {{ 'is-active' if active=='approvals' else '' }}">Approvals</a>
+
+      <p class="nav-section-label">Platform</p>
+      <a href="/app/coming-soon/contact-center" class="nav-item nav-item-soon">Contact Center <span class="soon-tag">Soon</span></a>
+      <a href="/app/procurement" class="nav-item {{ 'is-active' if active=='procurement' else '' }}">Procurement</a>
+      <a href="/app/finance" class="nav-item {{ 'is-active' if active=='finance' else '' }}">Finance</a>
+      <a href="/app/people" class="nav-item {{ 'is-active' if active=='people' else '' }}">People</a>
+      <a href="/knowledge/home" target="_blank" rel="noopener" class="nav-item">Knowledge <span class="new-tag">Open ↗</span></a>
+      <a href="/app/coming-soon/ai-agents" class="nav-item nav-item-soon">AI Agents <span class="soon-tag">Soon</span></a>
+      <a href="/app/coming-soon/reports" class="nav-item nav-item-soon">Reports <span class="soon-tag">Soon</span></a>
+      <a href="/app/coming-soon/automations" class="nav-item nav-item-soon">Automations <span class="soon-tag">Soon</span></a>
+      <a href="/app/coming-soon/settings" class="nav-item nav-item-soon">Settings <span class="soon-tag">Soon</span></a>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="org-pill">
+        <span class="org-name">Hyderabad Luxury Villas</span>
+        <span class="org-meta">Demo workspace</span>
+      </div>
+    </div>
+  </aside>
+
+  <div class="app-main">
+    <header class="app-topbar">
+      <button class="cmdbar-trigger" id="cmdbar-trigger" type="button">
+        <span>Ask or search anything…</span>
+        <kbd>Ctrl K</kbd>
+      </button>
+      <div class="topbar-right">
+        <span class="lang-pill">EN</span>
+        <span class="topbar-icon" title="Notifications">🔔</span>
+        <span class="user-pill">Ravi Kumar <span class="user-role">Owner</span></span>
+      </div>
+    </header>
+
+    <main class="app-content">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+
+<div class="cmdbar-overlay" id="cmdbar-overlay">
+  <div class="cmdbar">
+    <input type="text" class="cmdbar-input" placeholder="Try: Show delayed projects / Which customers haven't paid? …" autofocus>
+    <p class="cmdbar-note">AI command bar — not wired up yet in this build. Coming in a later pass.</p>
+  </div>
+</div>
+
+<script src="/app-static/app.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

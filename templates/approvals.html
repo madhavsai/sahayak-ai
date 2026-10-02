@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Approvals{% endblock %}
+{% block content %}
+
+<a href="/app/home" class="back-link">← Home</a>
+
+<div class="page-head">
+  <h1>Things waiting for you</h1>
+  <p class="page-sub">One place for every approval — procurement, finance, and people.</p>
+</div>
+
+{% if approvals %}
+<div class="approval-grid" id="approval-grid">
+  {% for a in approvals %}
+  <div class="approval-item-card" data-idx="{{ loop.index0 }}">
+    <span class="lang-chip">{{ a.kind }}</span>
+    <h3 style="font-size:1rem; margin-top:8px;">{{ a.title }}</h3>
+    {% if a.amount %}<p class="cell-mono" style="font-size:1.1rem; font-weight:600;">₹{{ "{:,}".format(a.amount) }}</p>{% endif %}
+    <p class="cell-muted">{{ a.context }} · requested by {{ a.requester }}</p>
+    <div class="suggestion-row" style="margin-top:12px;">
+      <button type="button" class="btn btn-primary btn-small approval-action" data-action="approve">Approve</button>
+      <button type="button" class="btn btn-ghost btn-small approval-action" data-action="reject">Reject</button>
+      <a href="{{ a.link }}" class="table-link" style="align-self:center;">View →</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="cell-muted">Nothing waiting for you — you're all caught up.</p>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  document.querySelectorAll(".approval-action").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".approval-item-card");
+      card.style.opacity = "0.4";
+      card.querySelectorAll("button").forEach((b) => (b.disabled = true));
+      const label = document.createElement("p");
+      label.className = "inline-confirm";
+      label.textContent = btn.dataset.action === "approve" ? "✓ Approved" : "✓ Rejected";
+      card.appendChild(label);
+    });
+  });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ inv.id }}{% endblock %}
+{% block content %}
+
+<a href="/app/finance/invoices" class="back-link">← Sales Invoices</a>
+
+<div class="detail-head">
+  <div>
+    <h1>{{ inv.id }}</h1>
+    <p class="page-sub">{{ inv.customer }} · {{ inv.project }}</p>
+  </div>
+  <span class="status-chip status-chip-lg status-{{ inv.status|lower|replace(' ', '-') }}">{{ inv.status }}</span>
+</div>
+
+<div class="health-grid">
+  <div class="health-card"><span class="health-label">Amount</span><span class="health-value" style="font-size:1rem;">₹{{ "{:,}".format(inv.amount) }}</span></div>
+  <div class="health-card"><span class="health-label">Paid</span><span class="health-value" style="font-size:1rem;">₹{{ "{:,}".format(inv.paid) }}</span></div>
+  <div class="health-card"><span class="health-label">Outstanding</span><span class="health-value" style="font-size:1rem;">₹{{ "{:,}".format(inv.amount - inv.paid) }}</span></div>
+  <div class="health-card"><span class="health-label">Due date</span><span class="health-value" style="font-size:1rem;">{{ inv.due_date }}</span></div>
+</div>
+
+<div class="ai-ask-panel" style="margin-top:24px;">
+  <span class="ai-ask-label">Ask AI about this invoice</span>
+  <div class="ai-ask-examples">
+    <span class="ai-ask-chip">Has the customer acknowledged this invoice?</span>
+    <span class="ai-ask-chip">When is payment expected?</span>
+  </div>
+</div>
+
+{% endblock %}

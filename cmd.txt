@@ -1,0 +1,23 @@
+Sahayak AI - Phase 1 validation demo - run commands
+
+Setup (first time only):
+  cd "products/sahayak-ai"
+  pip install -r requirements.txt
+
+Run:
+  cd "products/sahayak-ai"
+  python -m uvicorn main:app --reload --port 8040
+
+Then open:
+  http://localhost:8040
+
+Check signups collected so far (JSON):
+  http://localhost:8040/api/signups
+
+Signups are stored at: products/sahayak-ai/data/signups.json
+(Phase 1 only - see PRD.md "Open Questions" for where this moves to before
+sharing the link publicly on Vercel, since Vercel's filesystem isn't
+persistent across requests - that's the "wire it later" step.)
+
+Kill a stale server holding port 8040 (PowerShell):
+  Get-NetTCPConnection -LocalPort 8040 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force }

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Vendors{% endblock %}
+{% block content %}
+
+<a href="/app/home" class="back-link">← Home</a>
+
+<div class="page-head">
+  <h1>Vendors</h1>
+  <p class="page-sub">{{ vendors|length }} vendors across {{ vendors|map(attribute="category")|unique|list|length }} categories.</p>
+</div>
+
+<div class="table-card">
+  <table class="data-table">
+    <thead><tr><th>Vendor</th><th>Category</th><th>Outstanding</th></tr></thead>
+    <tbody>
+      {% for v in vendors %}
+      <tr>
+        <td class="cell-strong">{{ v.name }}</td>
+        <td><span class="lang-chip">{{ v.category }}</span></td>
+        <td class="cell-mono">{% if v.outstanding %}₹{{ "{:,}".format(v.outstanding) }}{% else %}—{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<p class="section-footnote">Purchase orders, quotes comparison, and goods-received matching live under Procurement — not built yet in this pass.</p>
+
+{% endblock %}

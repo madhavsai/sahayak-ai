@@ -1,0 +1,29 @@
+{% extends "knowledge_base.html" %}
+{% block title %}Audit Logs{% endblock %}
+{% block content %}
+
+<a href="/knowledge/home" class="back-link">← Knowledge Home</a>
+
+<div class="page-head">
+  <h1>Audit Logs</h1>
+  <p class="page-sub">Every important action — human or AI — logged.</p>
+</div>
+
+<div class="table-card">
+  <table class="data-table">
+    <thead><tr><th>Actor</th><th>Type</th><th>Action</th><th>Object</th><th>Timestamp</th></tr></thead>
+    <tbody>
+      {% for e in events %}
+      <tr>
+        <td class="cell-strong">{{ e.actor }}</td>
+        <td><span class="status-chip status-{{ 'active' if e.kind == 'Human' else 'pending' }}">{{ e.kind }}</span></td>
+        <td>{{ e.action }}</td>
+        <td class="cell-muted">{{ e.object }}</td>
+        <td class="cell-mono">{{ e.timestamp }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

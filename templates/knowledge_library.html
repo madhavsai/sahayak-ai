@@ -1,0 +1,65 @@
+{% extends "knowledge_base.html" %}
+{% block title %}Knowledge{% endblock %}
+{% block content %}
+
+<a href="/knowledge/home" class="back-link">← Knowledge Home</a>
+
+<div class="page-head">
+  <h1>Knowledge Library</h1>
+  <p class="page-sub">Every document, message, email, and call — not a file manager, a unified explorer.</p>
+</div>
+
+<div class="inbox-tabs" id="library-tabs">
+  <button type="button" class="inbox-tab is-active" data-filter="all">All</button>
+  <button type="button" class="inbox-tab" data-filter="documents">Documents</button>
+  <button type="button" class="inbox-tab" data-filter="conversations">Conversations</button>
+  <button type="button" class="inbox-tab" data-filter="emails">Emails</button>
+  <button type="button" class="inbox-tab" data-filter="invoices">Invoices</button>
+</div>
+
+<div class="library-grid" id="library-grid">
+  {% for item in items %}
+  <div class="library-card" data-category="{{ item.category }}">
+    <div class="library-card-top">
+      <span class="lang-chip">{{ item.source }}</span>
+      <span class="cell-muted" style="font-size:0.78rem;">{{ item.updated }}</span>
+    </div>
+    <h3 style="font-size:0.98rem;">{{ item.title }}</h3>
+    <div class="library-card-foot">
+      <span class="cell-muted">{{ item.owner }}</span>
+      <span class="lang-chip">{{ item.language }}</span>
+    </div>
+    <div class="library-related">
+      {% for r in item.related %}<span class="related-tag">{{ r }}</span>{% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<p class="cell-muted" id="library-empty" hidden style="margin-top:16px;">Nothing in this category yet.</p>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  const tabs = document.querySelectorAll("#library-tabs .inbox-tab");
+  const cards = document.querySelectorAll("#library-grid .library-card");
+  const empty = document.getElementById("library-empty");
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((t) => t.classList.remove("is-active"));
+      tab.classList.add("is-active");
+      const filter = tab.dataset.filter;
+      let visibleCount = 0;
+      cards.forEach((card) => {
+        const match = filter === "all" || card.dataset.category === filter;
+        card.hidden = !match;
+        if (match) visibleCount += 1;
+      });
+      empty.hidden = visibleCount > 0;
+    });
+  });
+})();
+</script>
+{% endblock %}

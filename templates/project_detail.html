@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}{{ project.name }}{% endblock %}
+{% block content %}
+
+<a href="/app/projects" class="back-link">← Projects</a>
+
+<div class="detail-head">
+  <div>
+    <h1>{{ project.name }}</h1>
+    <p class="page-sub">{{ project.location }} · {{ project.client }} · PM: {{ project.manager }}</p>
+  </div>
+  <span class="status-chip status-{{ project.health|lower|replace(' ', '-') }} status-chip-lg">{{ project.health }}</span>
+</div>
+
+<p class="health-note">{{ project.health_note }}</p>
+
+<div class="progress-bar progress-bar-lg">
+  <div class="progress-fill" style="width: {{ project.progress }}%"></div>
+</div>
+<p class="cell-muted" style="margin-top:4px;">{{ project.progress }}% complete</p>
+
+<div class="detail-tabs">
+  <span class="detail-tab is-active">Overview</span>
+  <span class="detail-tab">Milestones</span>
+  <span class="detail-tab">Tasks</span>
+  <span class="detail-tab">Site Updates</span>
+  <span class="detail-tab">Procurement</span>
+  <span class="detail-tab">Client Portal</span>
+</div>
+
+<div class="health-grid" style="margin-top: 24px;">
+  <div class="health-card">
+    <span class="health-label">Budget</span>
+    <span class="health-value">₹{{ "{:,}".format(project.budget) }}</span>
+  </div>
+  <div class="health-card">
+    <span class="health-label">Spent</span>
+    <span class="health-value">₹{{ "{:,}".format(project.spent) }}</span>
+  </div>
+  <div class="health-card">
+    <span class="health-label">Remaining</span>
+    <span class="health-value">₹{{ "{:,}".format(project.budget - project.spent) }}</span>
+  </div>
+  <div class="health-card">
+    <span class="health-label">Pending payment</span>
+    <span class="health-value">₹{{ "{:,}".format(project.pending_payment) }}</span>
+  </div>
+</div>
+
+<div class="suggestion-row" style="margin-top:16px;">
+  <a href="/app/finance/project/{{ project.id }}" class="suggestion-chip">Full project finance →</a>
+</div>
+
+<h2 class="block-title" style="margin-top: 32px;">Milestones</h2>
+<div class="milestone-row">
+  {% for m in project.milestones %}
+  <div class="milestone-pip milestone-{{ m.status }}">
+    <span class="milestone-dot"></span>
+    <span>{{ m.name }}</span>
+  </div>
+  {% endfor %}
+</div>
+
+<h2 class="block-title" style="margin-top: 32px;">Open tasks</h2>
+{% if tasks %}
+<div class="table-card">
+  <table class="data-table">
+    <thead><tr><th>Task</th><th>Owner</th><th>Due</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for t in tasks %}
+      <tr>
+        <td class="cell-strong">{{ t.title }}</td>
+        <td>{{ t.owner }}</td>
+        <td class="cell-mono">{{ t.due }}</td>
+        <td><span class="status-chip status-{{ t.status }}">{{ t.status }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="cell-muted">No open tasks for this project.</p>
+{% endif %}
+
+<div class="ai-ask-panel" style="margin-top: 32px;">
+  <span class="ai-ask-label">Ask AI about this project</span>
+  <div class="ai-ask-examples">
+    <span class="ai-ask-chip">Why is this project delayed?</span>
+    <span class="ai-ask-chip">Summarize this project</span>
+    <span class="ai-ask-chip">What's the next milestone?</span>
+  </div>
+  <p class="section-footnote">Not wired up yet — shown here to make the intended interaction concrete.</p>
+</div>
+
+{% endblock %}

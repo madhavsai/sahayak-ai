@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Tasks{% endblock %}
+{% block content %}
+
+<a href="/app/home" class="back-link">← Home</a>
+
+<div class="page-head">
+  <h1>Tasks</h1>
+  <p class="page-sub">{{ tasks|selectattr("status", "equalto", "overdue")|list|length }} overdue, {{ tasks|length }} total.</p>
+</div>
+
+<div class="inbox-tabs">
+  <span class="inbox-tab is-active">All</span>
+  <span class="inbox-tab">My tasks</span>
+  <span class="inbox-tab">Overdue</span>
+</div>
+
+<div class="table-card">
+  <table class="data-table">
+    <thead>
+      <tr><th>Task</th><th>Project</th><th>Owner</th><th>Due</th><th>Priority</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      {% for t in tasks %}
+      <tr>
+        <td class="cell-strong">{{ t.title }}</td>
+        <td>{{ t.project or "—" }}</td>
+        <td>{{ t.owner }}</td>
+        <td class="cell-mono">{{ t.due }}</td>
+        <td>{{ t.priority }}</td>
+        <td><span class="status-chip status-{{ t.status }}">{{ t.status }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<p class="section-footnote">Tasks shown here can originate from WhatsApp, a call, an AI agent, or a site update once Contact Center / Enterprise Brain are built — right now these are seeded sample records.</p>
+
+{% endblock %}

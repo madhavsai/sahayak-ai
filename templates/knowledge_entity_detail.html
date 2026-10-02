@@ -1,0 +1,42 @@
+{% extends "knowledge_base.html" %}
+{% block title %}{{ entity.name }}{% endblock %}
+{% block content %}
+
+<a href="/knowledge/entities" class="back-link">← Entities</a>
+
+<div class="page-head">
+  <h1>{{ entity.name }}</h1>
+  <p class="page-sub">{{ entity.type }} · {{ entity.role }}</p>
+</div>
+
+<div class="ai-answer-card">
+  <span class="ai-answer-label">AI summary</span>
+  <p class="ai-answer-text">{{ entity.summary }}</p>
+</div>
+
+<div class="two-col" style="margin-top:24px;">
+  <div>
+    <h2 class="block-title">Related documents</h2>
+    <ul class="simple-list">
+      {% for d in entity.related_documents %}<li>{{ d }}</li>{% endfor %}
+    </ul>
+  </div>
+  <div>
+    <h2 class="block-title">Related conversations</h2>
+    <ul class="simple-list">
+      {% for c in entity.related_conversations %}<li>{{ c }}</li>{% endfor %}
+    </ul>
+  </div>
+</div>
+
+<h2 class="block-title" style="margin-top:24px;">Related tasks</h2>
+<ul class="simple-list">
+  {% for t in entity.related_tasks %}<li>{{ t }}</li>{% endfor %}
+</ul>
+
+<h2 class="block-title" style="margin-top:24px;">Projects</h2>
+<div class="suggestion-row">
+  {% for p in entity.projects %}<span class="related-tag">{{ p }}</span>{% endfor %}
+</div>
+
+{% endblock %}

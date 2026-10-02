@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Purchase Orders{% endblock %}
+{% block content %}
+
+<a href="/app/procurement" class="back-link">← Procurement</a>
+
+<div class="page-head">
+  <h1>Purchase Orders</h1>
+  <p class="page-sub">{{ orders|selectattr("overdue")|list|length }} overdue, {{ orders|length }} total.</p>
+</div>
+
+<div class="table-card">
+  <table class="data-table">
+    <thead><tr><th>PO</th><th>Vendor</th><th>Project</th><th>Items</th><th>Amount</th><th>Expected delivery</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for po in orders %}
+      <tr>
+        <td class="cell-strong"><a href="/app/procurement/orders/{{ po.id }}" class="table-link">{{ po.id }}</a></td>
+        <td>{{ po.vendor }}</td>
+        <td>{{ po.project }}</td>
+        <td class="cell-muted">{{ po.items }}</td>
+        <td class="cell-mono">₹{{ "{:,}".format(po.amount) }}</td>
+        <td class="cell-mono">{{ po.expected_delivery }}</td>
+        <td><span class="status-chip status-{{ 'overdue' if po.overdue else po.status|lower|replace(' ', '-') }}">{{ po.status }}{% if po.overdue %} (overdue){% endif %}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

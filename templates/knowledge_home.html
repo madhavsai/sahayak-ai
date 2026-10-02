@@ -1,0 +1,73 @@
+{% extends "knowledge_base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <h1>Your Business Knowledge</h1>
+  <p class="page-sub">Everything your business knows, connected in one place.</p>
+</div>
+
+<section class="home-block">
+  <h2 class="block-title">Knowledge health</h2>
+  <div class="health-grid">
+    <div class="health-card"><span class="health-label">Documents</span><span class="health-value">{{ "{:,}".format(health.documents) }}</span></div>
+    <div class="health-card"><span class="health-label">Conversations</span><span class="health-value">{{ "{:,}".format(health.conversations) }}</span></div>
+    <div class="health-card"><span class="health-label">Emails</span><span class="health-value">{{ "{:,}".format(health.emails) }}</span></div>
+    <div class="health-card"><span class="health-label">Audio</span><span class="health-value">{{ health.audio }}</span></div>
+    <div class="health-card"><span class="health-label">Videos</span><span class="health-value">{{ health.videos }}</span></div>
+    <div class="health-card"><span class="health-label">Connected sources</span><span class="health-value">{{ health.connected_sources }}</span></div>
+    <div class="health-card"><span class="health-label">Indexed items</span><span class="health-value">{{ "{:,}".format(health.indexed_items) }}</span></div>
+  </div>
+</section>
+
+<section class="home-block">
+  <h2 class="block-title">Connector health</h2>
+  <div class="connector-health-grid">
+    {% for c in connectors %}
+    {% if c.status == "Connected" %}
+    <a href="/knowledge/connectors/{{ c.id }}" class="connector-health-card">
+      <div class="connector-health-top">
+        <span class="cell-strong">{{ c.name }}</span>
+        <span class="health-dot health-dot-{{ c.health|lower }}"></span>
+      </div>
+      <span class="cell-muted">{{ c.item_summary }}</span>
+      <span class="cell-mono" style="font-size:0.78rem;">{{ c.last_sync }}</span>
+    </a>
+    {% endif %}
+    {% endfor %}
+  </div>
+</section>
+
+<section class="home-block">
+  <div class="two-col">
+    <div>
+      <h2 class="block-title">Ingestion health</h2>
+      <div class="ingestion-pill-row">
+        <span class="ing-pill">{{ ingestion.completed }} completed</span>
+        <span class="ing-pill ing-pill-warn">{{ ingestion.processing }} processing</span>
+        <span class="ing-pill ing-pill-alert">{{ ingestion.failed }} failed</span>
+        <span class="ing-pill ing-pill-warn">{{ ingestion.needs_review }} needs review</span>
+      </div>
+    </div>
+    <div>
+      <h2 class="block-title">AI usage</h2>
+      <div class="ingestion-pill-row">
+        <span class="ing-pill">{{ ai_usage.questions_answered }} questions answered</span>
+        <span class="ing-pill">{{ ai_usage.avg_sources }} avg. sources</span>
+        <span class="ing-pill">{{ ai_usage.avg_response_time }} avg. response</span>
+        <span class="ing-pill ing-pill-warn">{{ ai_usage.unanswered }} unanswered</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="home-block">
+  <h2 class="block-title">Try asking</h2>
+  <div class="suggestion-row">
+    {% for s in suggestions %}
+    <a href="/knowledge/search?q={{ s|urlencode }}" class="suggestion-chip">{{ s }}</a>
+    {% endfor %}
+  </div>
+</section>
+
+{% endblock %}

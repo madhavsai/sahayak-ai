@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Sales Invoices{% endblock %}
+{% block content %}
+
+<a href="/app/finance" class="back-link">← Finance</a>
+
+<div class="page-head">
+  <h1>Sales Invoices</h1>
+  <p class="page-sub">What customers owe, and what's already paid.</p>
+</div>
+
+<div class="table-card">
+  <table class="data-table">
+    <thead><tr><th>Invoice</th><th>Customer</th><th>Project</th><th>Amount</th><th>Paid</th><th>Outstanding</th><th>Due</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for inv in invoices %}
+      <tr>
+        <td class="cell-strong"><a href="/app/finance/invoices/{{ inv.id }}" class="table-link">{{ inv.id }}</a></td>
+        <td>{{ inv.customer }}</td>
+        <td>{{ inv.project }}</td>
+        <td class="cell-mono">₹{{ "{:,}".format(inv.amount) }}</td>
+        <td class="cell-mono">₹{{ "{:,}".format(inv.paid) }}</td>
+        <td class="cell-mono">₹{{ "{:,}".format(inv.amount - inv.paid) }}</td>
+        <td class="cell-mono">{{ inv.due_date }}</td>
+        <td><span class="status-chip status-{{ inv.status|lower|replace(' ', '-') }}">{{ inv.status }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

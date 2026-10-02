@@ -1,0 +1,14 @@
+{% extends "knowledge_base.html" %}
+{% block title %}{{ name }}{% endblock %}
+{% block content %}
+
+<div class="coming-soon-wrap">
+  <span class="coming-soon-badge">Coming soon</span>
+  <h1>{{ name }}</h1>
+  <p class="coming-soon-copy">{{ description }}</p>
+  <p class="coming-soon-note">Part of the full Knowledge Platform vision, not built in this pass —
+    Home, Search &amp; Ask AI, Knowledge library, Connectors, and Entities are the real, working parts.</p>
+  <a href="/knowledge/home" class="btn-link-back">← Back to Knowledge Home</a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "knowledge_base.html" %}
+{% block title %}Ingestion{% endblock %}
+{% block content %}
+
+<a href="/knowledge/home" class="back-link">← Knowledge Home</a>
+
+<div class="page-head">
+  <h1>Ingestion</h1>
+  <p class="page-sub">Everything connected passes through this pipeline before it's searchable.</p>
+</div>
+
+<div class="pipeline-row">
+  {% for stage in stages %}
+  <div class="pipeline-stage">{{ stage }}</div>
+  {% if not loop.last %}<span class="pipeline-arrow">→</span>{% endif %}
+  {% endfor %}
+</div>
+
+<h2 class="block-title" style="margin-top:32px;">Queue</h2>
+<div class="table-card">
+  <table class="data-table">
+    <thead><tr><th>Item</th><th>Source</th><th>Type</th><th>Stage</th><th>Progress</th><th>Started</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for q in queue %}
+      <tr>
+        <td class="cell-strong">{{ q.item }}</td>
+        <td>{{ q.source }}</td>
+        <td>{{ q.type }}</td>
+        <td class="cell-mono">{{ q.stage }}</td>
+        <td>
+          <div class="progress-bar" style="width:100px; margin:0;"><div class="progress-fill" style="width:{{ q.progress }}%"></div></div>
+        </td>
+        <td class="cell-muted">{{ q.started }}</td>
+        <td><span class="status-chip status-{{ q.status }}">{{ q.status }}</span></td>
+        <td>{% if q.status == "failed" %}<button type="button" class="table-link ingestion-retry-btn">Retry →</button>{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<p class="section-footnote">Per-item extraction preview, chunk preview, and embedding status aren't wired up yet — this queue is seeded, not live.</p>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  document.querySelectorAll(".ingestion-retry-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      btn.textContent = "Retrying…";
+      btn.disabled = true;
+      const row = btn.closest("tr");
+      setTimeout(() => {
+        row.querySelector(".status-failed").outerHTML = '<span class="status-chip status-processing">processing</span>';
+        row.querySelector("td:nth-child(4)").textContent = "Fetch";
+        btn.remove();
+      }, 800);
+    });
+  });
+})();
+</script>
+{% endblock %}

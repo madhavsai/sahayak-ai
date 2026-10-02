@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sahayak AI — your khata, upgraded</title>
+<meta name="description" content="Pick exactly what you need: AI that answers your calls, AI that knows your business, or AI that runs your operations. Built for Indian businesses running on WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <a href="#top" class="brand">Sahayak <span>AI</span></a>
+    <nav class="header-nav">
+      <a href="#services">Services</a>
+      <a href="#demo">See it work</a>
+      <a href="#signup" class="btn btn-small">Get early access</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">For businesses that run on WhatsApp, calls, and a khata</p>
+        <h1>Your business already has a system. It's just not written down anywhere.</h1>
+        <p class="hero-sub">
+          Orders in WhatsApp. Payments on the phone. Everything else in your head or a notebook.
+          Sahayak reads what's already happening in your business and keeps the record straight —
+          without asking you to change how you work.
+        </p>
+        <div class="hero-actions">
+          <a href="#signup" class="btn btn-primary">Get early access</a>
+          <a href="#demo" class="btn btn-ghost">Watch it work on a real message ↓</a>
+        </div>
+        <p class="hero-trust">Built by an engineer who's spent 2+ years building production voice-AI and
+          business-automation systems — not a weekend AI wrapper.</p>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="ledger-card">
+          <div class="ledger-head">
+            <span>Today's entries</span>
+            <span class="ledger-date" id="ledger-today"></span>
+          </div>
+          <div class="ledger-row"><span>Ramesh Traders — 50 bags cement</span><span class="tag tag-done">Logged</span></div>
+          <div class="ledger-row"><span>Site supervisor — fitting delay, Block&nbsp;C</span><span class="tag tag-pending">Flagged</span></div>
+          <div class="ledger-row"><span>Steel vendor — payment terms query</span><span class="tag tag-done">Answered</span></div>
+          <div class="ledger-row faint"><span>— from your WhatsApp, automatically —</span><span></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE PROBLEM, GROUNDED -->
+  <section class="problem">
+    <div class="wrap problem-grid">
+      <p class="problem-quote">"Right now we're juggling WhatsApp, Excel, and Tally — which works, until
+        client volume increases, and then everything breaks."</p>
+      <p class="problem-note">— the pattern we heard, almost word for word, from distributors, builders,
+        and traders independently. Not a hypothetical.</p>
+    </div>
+  </section>
+
+  <!-- VERTICAL TOGGLE -->
+  <section class="vertical-select">
+    <div class="wrap">
+      <p class="section-label">See it for your kind of business</p>
+      <div class="toggle-group" role="tablist" aria-label="Choose your business type">
+        <button class="toggle-btn is-active" data-vertical="construction" role="tab" aria-selected="true">Construction / contracting</button>
+        <button class="toggle-btn" data-vertical="distribution" role="tab" aria-selected="false">Distribution / wholesale</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- THREE SERVICES -->
+  <section id="services" class="services">
+    <div class="wrap">
+      <p class="section-label">Three things. Take one, take all three.</p>
+      <h2>Sahayak isn't one product you're forced into. It's three — pick what you actually need.</h2>
+
+      <div class="service-list">
+
+        <article class="service-row" id="svc-contact-center">
+          <div class="service-num">01</div>
+          <div class="service-body">
+            <h3>AI Contact Center</h3>
+            <p class="service-tagline">Replaces the BPO desk — end to end, not just a chatbot bolted onto your website.</p>
+            <p class="service-desc" data-vertical-text="construction">Someone calls asking if the Block&nbsp;C
+              site visit is still on. Sahayak answers, checks your schedule, confirms it, creates a ticket, and
+              updates your CRM — before you've even seen the missed call notification.</p>
+            <p class="service-desc" data-vertical-text="distribution" hidden>A retailer calls asking if 50 bags of
+              cement are in stock. Sahayak checks, answers, takes the order if you say yes, opens a ticket, and
+              updates your CRM — no one waiting on hold for you to finish what you're doing.</p>
+
+            <div class="badge-group">
+              <span class="badge-label">Channels</span>
+              <div class="badge-row">
+                <span class="badge">Inbound calls</span>
+                <span class="badge">Outbound calls</span>
+                <span class="badge">WhatsApp</span>
+                <span class="badge">Web chat</span>
+                <span class="badge">Email</span>
+              </div>
+            </div>
+            <div class="badge-group">
+              <span class="badge-label">Handles</span>
+              <div class="badge-row">
+                <span class="badge">Lead qualification</span>
+                <span class="badge">Appointment booking</span>
+                <span class="badge">Order &amp; payment lookup</span>
+                <span class="badge">Renewals &amp; reminders</span>
+                <span class="badge">Collections follow-up</span>
+                <span class="badge">Escalation to a human</span>
+              </div>
+            </div>
+            <div class="badge-group">
+              <span class="badge-label">Connects to</span>
+              <div class="badge-row">
+                <span class="badge badge-connects">Your CRM</span>
+                <span class="badge badge-connects">Your ticketing system</span>
+                <span class="badge badge-connects">Your call recording / logs</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="service-row" id="svc-enterprise-brain">
+          <div class="service-num">02</div>
+          <div class="service-body">
+            <h3>Enterprise Brain</h3>
+            <p class="service-tagline">RAG with real connectors and real governance — not a ChatGPT wrapper over one folder of PDFs.</p>
+            <p class="service-desc" data-vertical-text="construction">"What were our payment terms with the
+              steel vendor last time?" Sahayak checks your invoices, past messages, and contracts — and answers
+              in one line, with the source attached.</p>
+            <p class="service-desc" data-vertical-text="distribution" hidden>"Which retailers still owe us from
+              last month?" Sahayak checks your records, order history, and payment messages — and answers in one
+              line, with the source attached.</p>
+
+            <div class="badge-group">
+              <span class="badge-label">Reads</span>
+              <div class="badge-row">
+                <span class="badge">Documents &amp; contracts</span>
+                <span class="badge">Spreadsheets</span>
+                <span class="badge">Photos</span>
+                <span class="badge">Audio / voice notes</span>
+                <span class="badge">Video</span>
+                <span class="badge">WhatsApp chat history</span>
+              </div>
+            </div>
+            <div class="badge-group">
+              <span class="badge-label">Governance</span>
+              <div class="badge-row">
+                <span class="badge badge-secure">Role-based access</span>
+                <span class="badge badge-secure">Every answer cites its source</span>
+                <span class="badge badge-secure">Full audit trail</span>
+                <span class="badge badge-secure">Your data, never used to train anyone else's model</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="service-row service-row-operations" id="svc-operations">
+          <div class="service-num">03</div>
+          <div class="service-body">
+            <h3>Operations</h3>
+            <p class="service-tagline">The one most businesses actually start with — runs the parts of the business that today only live in your head.</p>
+            <p class="service-desc" data-vertical-text="construction">Orders, vendors, bills, project progress,
+              and a simple page your client can check themselves — instead of calling you for an update every
+              other day.</p>
+            <p class="service-desc" data-vertical-text="distribution" hidden>Orders, retailer accounts, stock
+              requests, and payment follow-ups — kept straight automatically, instead of re-typed into Excel
+              every night.</p>
+
+            <div class="module-grid">
+              <div class="module-tile"><span class="module-tag">01</span>Procurement &amp; purchase requests</div>
+              <div class="module-tile"><span class="module-tag">02</span>Bills, expenses &amp; payment tracking</div>
+              <div class="module-tile"><span class="module-tag">03</span>CRM — leads, customers, follow-ups</div>
+              <div class="module-tile"><span class="module-tag">04</span>Vendor management &amp; commitments</div>
+              <div class="module-tile"><span class="module-tag">05</span>Project / progress tracking</div>
+              <div class="module-tile"><span class="module-tag">06</span>Client-facing progress page</div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVE DEMO: THE ONE BOLD MOMENT -->
+  <section id="demo" class="demo">
+    <div class="wrap">
+      <p class="section-label">Not a mockup. Here's what actually happens to one message.</p>
+      <h2>Watch a real WhatsApp message become a ledger entry.</h2>
+
+      <div class="demo-stage">
+        <div class="demo-phone">
+          <div class="demo-phone-head">WhatsApp — Site Supervisor</div>
+          <div class="demo-chat" id="demo-chat">
+            <div class="chat-bubble" id="demo-bubble" data-vertical-msg="construction">
+              <span class="chat-msg-te">Sir material vachindi, kaani fitting team inka site ki raledu</span>
+              <span class="chat-msg-en">(Sir, the material has arrived, but the fitting team hasn't reached the site yet)</span>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-demo" id="demo-play">Watch it get logged →</button>
+        </div>
+
+        <div class="demo-arrow" aria-hidden="true">→</div>
+
+        <div class="demo-ledger">
+          <div class="demo-ledger-head">Operations — Block C</div>
+          <div class="demo-ledger-body" id="demo-ledger-body">
+            <p class="demo-ledger-empty">Waiting for the message to come through…</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MULTILINGUAL NOTE -->
+  <section class="lang-note">
+    <div class="wrap">
+      <p>That message above wasn't translated by hand — it's a real example of how site conversations
+        actually sound: Telugu and English mixed mid-sentence. Most AI tools choke on that. Reading it
+        correctly, every time, is most of the hard part.</p>
+    </div>
+  </section>
+
+  <!-- SIGNUP -->
+  <section id="signup" class="signup">
+    <div class="wrap signup-grid">
+      <div class="signup-copy">
+        <p class="section-label">Early access — no cost, no commitment</p>
+        <h2>Tell us which of the three you'd actually use.</h2>
+        <p class="signup-sub">We're building this one piece at a time, based on who actually signs up for
+          what — not guessing. Pick one, pick all three, whatever's true for your business.</p>
+      </div>
+
+      <form class="signup-form" id="signup-form">
+        <div class="form-row">
+          <label for="f-name">Your name</label>
+          <input type="text" id="f-name" name="name" required autocomplete="name">
+        </div>
+
+        <div class="form-row">
+          <label for="f-contact">Phone or email</label>
+          <input type="text" id="f-contact" name="contact" required placeholder="So we can actually reach you">
+        </div>
+
+        <div class="form-row">
+          <label for="f-business">What kind of business?</label>
+          <input type="text" id="f-business" name="business_type" required placeholder="e.g. Construction, Distribution, something else">
+          <div class="chip-row">
+            <button type="button" class="chip" data-fill="f-business" data-value="Construction / contracting">Construction</button>
+            <button type="button" class="chip" data-fill="f-business" data-value="Distribution / wholesale">Distribution</button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <span class="form-label-standalone">Which of these would you use? <em>(pick any)</em></span>
+          <div class="service-checks">
+            <label class="check-card">
+              <input type="checkbox" name="services" value="contact_center">
+              <span>AI Contact Center</span>
+            </label>
+            <label class="check-card">
+              <input type="checkbox" name="services" value="enterprise_brain">
+              <span>Enterprise Brain</span>
+            </label>
+            <label class="check-card">
+              <input type="checkbox" name="services" value="operations">
+              <span>Operations</span>
+            </label>
+          </div>
+          <button type="button" class="link-btn" id="select-all-services">Select all three</button>
+        </div>
+
+        <div class="form-row form-row-inline">
+          <label class="check-inline">
+            <input type="checkbox" name="wants_call">
+            <span>I'm open to a quick call about this</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-wide" id="signup-submit">Get early access</button>
+        <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-row">
+    <span>Sahayak AI — an early-stage validation build, not a finished product yet.</span>
+    <span>No data is sold or shared. Used only to decide what to build next.</span>
+  </div>
+</footer>
+
+<script src="/app.js"></script>
+</body>
+</html>

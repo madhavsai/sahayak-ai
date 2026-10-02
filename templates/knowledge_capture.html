@@ -1,0 +1,155 @@
+{% extends "knowledge_base.html" %}
+{% block title %}Add Knowledge{% endblock %}
+{% block content %}
+
+<a href="/knowledge/home" class="back-link">← Knowledge Home</a>
+
+<div class="page-head">
+  <h1>Add to Business Knowledge</h1>
+  <p class="page-sub">Capture anything — Sahayak figures out what it is and where it belongs.</p>
+</div>
+
+<div id="capture-picker">
+  <div class="capture-grid">
+    {% for m in methods %}
+    <button type="button" class="capture-btn" data-method="{{ m.id }}" data-label="{{ m.label }}">
+      <span class="capture-btn-label">{{ m.label }}</span>
+      <span class="capture-btn-desc">{{ m.desc }}</span>
+    </button>
+    {% endfor %}
+  </div>
+
+  <div class="dropzone" id="dropzone">
+    <p>Or drag and drop a file anywhere here</p>
+  </div>
+  <input type="file" id="hidden-file-input" style="display:none;">
+</div>
+
+<div id="capture-processing" class="capture-flow-card" hidden>
+  <span class="ai-answer-label" id="capture-method-label">Processing</span>
+  <p class="capture-filename" id="capture-filename"></p>
+  <div class="stage-list" id="stage-list">
+    {% for s in stages %}
+    <div class="stage-row" data-stage-index="{{ loop.index0 }}">
+      <span class="stage-dot"></span>
+      <span>{{ s }}</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div id="capture-classify" class="capture-flow-card" hidden>
+  <span class="ai-answer-label">What is this information?</span>
+  <p class="cell-muted" style="margin:6px 0 14px;">Sahayak suggests one automatically — change it if it's wrong.</p>
+  <div class="classify-chip-row">
+    {% for c in classifications %}
+    <button type="button" class="classify-chip" data-value="{{ c }}">{{ c }}</button>
+    {% endfor %}
+  </div>
+  <button type="button" class="btn btn-primary" id="confirm-classify-btn" style="margin-top:18px;">Add to Business Knowledge</button>
+</div>
+
+<div id="capture-done" class="capture-flow-card capture-flow-done" hidden>
+  <span class="ai-answer-label">Done</span>
+  <p class="ai-answer-text" id="capture-done-text"></p>
+  <div class="suggestion-row">
+    <a href="/knowledge/library" class="suggestion-chip">View in Knowledge Library</a>
+    <button type="button" class="suggestion-chip" id="capture-again-btn">Add another</button>
+  </div>
+</div>
+
+<p class="section-footnote" style="margin-top:24px;">This is a simulated flow for the demo — no file is actually
+  uploaded, processed, or stored. See VISION.md for the real ingestion pipeline this stands in for.</p>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  const picker = document.getElementById("capture-picker");
+  const processing = document.getElementById("capture-processing");
+  const classify = document.getElementById("capture-classify");
+  const done = document.getElementById("capture-done");
+  const stageRows = document.querySelectorAll(".stage-row");
+  const methodLabel = document.getElementById("capture-method-label");
+  const filenameEl = document.getElementById("capture-filename");
+  const hiddenInput = document.getElementById("hidden-file-input");
+  const dropzone = document.getElementById("dropzone");
+
+  let currentMethod = "";
+
+  function startCapture(methodLabelText, fileName) {
+    currentMethod = methodLabelText;
+    picker.hidden = true;
+    processing.hidden = false;
+    classify.hidden = true;
+    done.hidden = true;
+    methodLabel.textContent = methodLabelText;
+    filenameEl.textContent = fileName || "";
+    stageRows.forEach((r) => r.classList.remove("stage-active", "stage-done"));
+
+    let i = 0;
+    const tick = () => {
+      if (i > 0) stageRows[i - 1].classList.add("stage-done");
+      if (i >= stageRows.length) {
+        processing.hidden = true;
+        classify.hidden = false;
+        return;
+      }
+      stageRows[i].classList.add("stage-active");
+      i += 1;
+      setTimeout(tick, 420);
+    };
+    tick();
+  }
+
+  document.querySelectorAll(".capture-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (btn.dataset.method === "file" || btn.dataset.method === "photo" ||
+          btn.dataset.method === "audio" || btn.dataset.method === "video" ||
+          btn.dataset.method === "excel") {
+        hiddenInput.click();
+        hiddenInput.onchange = () => {
+          const f = hiddenInput.files[0];
+          startCapture(btn.dataset.label, f ? f.name : "");
+        };
+      } else {
+        startCapture(btn.dataset.label, "");
+      }
+    });
+  });
+
+  dropzone.addEventListener("dragover", (e) => { e.preventDefault(); dropzone.classList.add("is-dragover"); });
+  dropzone.addEventListener("dragleave", () => dropzone.classList.remove("is-dragover"));
+  dropzone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropzone.classList.remove("is-dragover");
+    const f = e.dataTransfer.files[0];
+    startCapture("Upload File", f ? f.name : "");
+  });
+
+  let selectedClass = null;
+  document.querySelectorAll(".classify-chip").forEach((chip, idx) => {
+    if (idx === 0) chip.classList.add("is-selected");
+    chip.addEventListener("click", () => {
+      document.querySelectorAll(".classify-chip").forEach((c) => c.classList.remove("is-selected"));
+      chip.classList.add("is-selected");
+      selectedClass = chip.dataset.value;
+    });
+  });
+
+  document.getElementById("confirm-classify-btn").addEventListener("click", () => {
+    const cls = selectedClass || document.querySelector(".classify-chip").dataset.value;
+    classify.hidden = true;
+    done.hidden = false;
+    document.getElementById("capture-done-text").textContent =
+      `Added as "${cls}" and connected to related projects, vendors, and people automatically.`;
+  });
+
+  document.getElementById("capture-again-btn").addEventListener("click", () => {
+    done.hidden = true;
+    picker.hidden = false;
+  });
+})();
+</script>
+{% endblock %}

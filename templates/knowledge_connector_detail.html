@@ -1,0 +1,156 @@
+{% extends "knowledge_base.html" %}
+{% block title %}{{ connector.name }}{% endblock %}
+{% block content %}
+
+<a href="/knowledge/connectors" class="back-link">← Connectors</a>
+
+<div class="detail-head">
+  <div>
+    <h1>{{ connector.name }}</h1>
+    <p class="page-sub">{{ connector.category }} · {{ connector.item_summary }}</p>
+  </div>
+  <span class="status-chip status-chip-lg status-{{ connector.status|lower|replace(' ', '-') }}">{{ connector.status }}</span>
+</div>
+
+<div class="detail-tabs" id="connector-tabs">
+  <span class="detail-tab is-active" data-tab="overview">Overview</span>
+  <span class="detail-tab" data-tab="content">Content</span>
+  <span class="detail-tab" data-tab="permissions">Permissions</span>
+  <span class="detail-tab" data-tab="sync">Sync</span>
+  <span class="detail-tab" data-tab="errors">Errors{% if errors %} ({{ errors|length }}){% endif %}</span>
+  <span class="detail-tab" data-tab="activity">Activity</span>
+</div>
+
+<div class="tab-panel" data-panel="overview">
+  <div class="health-grid">
+    <div class="health-card"><span class="health-label">Connection status</span><span class="health-value" style="font-size:1rem;">{{ connector.status }}</span></div>
+    <div class="health-card"><span class="health-label">Last sync</span><span class="health-value" style="font-size:1rem;">{{ connector.last_sync }}</span></div>
+    <div class="health-card"><span class="health-label">Items indexed</span><span class="health-value" style="font-size:1rem;">{{ connector.item_summary }}</span></div>
+    <div class="health-card"><span class="health-label">Health</span><span class="health-value" style="font-size:1rem;"><span class="health-dot health-dot-{{ connector.health|lower }}"></span> {{ connector.health }}</span></div>
+  </div>
+</div>
+
+<div class="tab-panel" data-panel="content" hidden>
+  <p class="cell-muted">Which folders Sahayak reads from this source.</p>
+  <div class="folder-tree">
+    <p class="folder-tree-label">Include</p>
+    {% for f in content_tree.include %}<span class="related-tag">{{ f }}</span>{% endfor %}
+    <p class="folder-tree-label" style="margin-top:10px;">Exclude</p>
+    {% for f in content_tree.exclude %}<span class="related-tag related-tag-exclude">{{ f }}</span>{% endfor %}
+  </div>
+  <p class="cell-muted" style="margin-top:14px; font-size:0.85rem;">Content types synced: Documents, Spreadsheets, Presentations</p>
+</div>
+
+<div class="tab-panel" data-panel="permissions" hidden>
+  <p class="cell-muted">Mode: <strong>Mirror source permissions</strong> — if someone can't see it in {{ connector.name }}, they can't see it here either.</p>
+  <h3 style="font-size:0.95rem; margin-top:16px;">Identity mapping</h3>
+  <div class="table-card">
+    <table class="data-table">
+      <thead><tr><th>Source identity</th><th>Business identity</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for m in identity_mapping %}
+        <tr>
+          <td class="cell-mono">{{ m.source_identity }}</td>
+          <td class="cell-strong">{{ m.business_identity }}</td>
+          <td><span class="status-chip status-{{ 'active' if m.status == 'Mapped' else 'overdue' }}">{{ m.status }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="tab-panel" data-panel="sync" hidden>
+  <div class="health-grid">
+    <div class="health-card"><span class="health-label">Last sync</span><span class="health-value" style="font-size:1rem;">{{ connector.last_sync }}</span></div>
+    <div class="health-card"><span class="health-label">Frequency</span><span class="health-value" style="font-size:1rem;">Every 15 minutes</span></div>
+    <div class="health-card"><span class="health-label">Items added (last sync)</span><span class="health-value" style="font-size:1rem;">14</span></div>
+    <div class="health-card"><span class="health-label">Items changed</span><span class="health-value" style="font-size:1rem;">3</span></div>
+  </div>
+  <button type="button" class="btn btn-ghost" id="sync-now-btn" style="margin-top:16px;">Sync now</button>
+  <p class="inline-confirm" id="sync-now-confirm" hidden></p>
+</div>
+
+<div class="tab-panel" data-panel="errors" hidden>
+  {% if errors %}
+  <div class="table-card" id="errors-table-card">
+    <table class="data-table">
+      <thead><tr><th>Item</th><th>Reason</th><th>Timestamp</th><th></th></tr></thead>
+      <tbody id="errors-tbody">
+        {% for e in errors %}
+        <tr>
+          <td class="cell-strong">{{ e.file }}</td>
+          <td><span class="status-chip status-overdue">{{ e.reason }}</span></td>
+          <td class="cell-mono">{{ e.timestamp }}</td>
+          <td><button type="button" class="table-link retry-btn">Retry →</button></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="cell-muted" id="errors-empty" hidden style="margin-top:12px;">No errors remaining.</p>
+  {% else %}
+  <p class="cell-muted">No errors.</p>
+  {% endif %}
+</div>
+
+<div class="tab-panel" data-panel="activity" hidden>
+  <div class="activity-timeline">
+    <div class="activity-row"><span class="activity-dot"></span><span>Connected — initial crawl started</span></div>
+    <div class="activity-row"><span class="activity-dot"></span><span>{{ connector.item_summary }} discovered</span></div>
+    <div class="activity-row"><span class="activity-dot"></span><span>Permission sync completed</span></div>
+    <div class="activity-row"><span class="activity-dot"></span><span>Incremental sync completed — {{ connector.last_sync }}</span></div>
+  </div>
+</div>
+
+<p class="section-footnote">Folder selection, permission remapping, and manual sync aren't wired up to do anything real yet — this shows the intended configuration surface.</p>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  const tabs = document.querySelectorAll("#connector-tabs .detail-tab");
+  const panels = document.querySelectorAll(".tab-panel");
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((t) => t.classList.remove("is-active"));
+      tab.classList.add("is-active");
+      panels.forEach((p) => { p.hidden = p.dataset.panel !== tab.dataset.tab; });
+    });
+  });
+
+  const syncBtn = document.getElementById("sync-now-btn");
+  if (syncBtn) {
+    syncBtn.addEventListener("click", () => {
+      syncBtn.disabled = true;
+      syncBtn.textContent = "Syncing…";
+      const confirmEl = document.getElementById("sync-now-confirm");
+      confirmEl.hidden = true;
+      setTimeout(() => {
+        syncBtn.disabled = false;
+        syncBtn.textContent = "Sync now";
+        confirmEl.textContent = "✓ Synced just now — 3 new items found.";
+        confirmEl.hidden = false;
+      }, 1100);
+    });
+  }
+
+  document.querySelectorAll(".retry-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const row = btn.closest("tr");
+      btn.textContent = "Retrying…";
+      btn.disabled = true;
+      setTimeout(() => {
+        row.remove();
+        const tbody = document.getElementById("errors-tbody");
+        if (tbody && tbody.children.length === 0) {
+          document.getElementById("errors-table-card").hidden = true;
+          document.getElementById("errors-empty").hidden = false;
+        }
+      }, 700);
+    });
+  });
+})();
+</script>
+{% endblock %}

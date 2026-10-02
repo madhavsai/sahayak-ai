@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Leave{% endblock %}
+{% block content %}
+
+<a href="/app/people" class="back-link">← People</a>
+
+<div class="page-head">
+  <h1>Leave</h1>
+  <p class="page-sub">Requests and approvals.</p>
+</div>
+
+<div class="table-card">
+  <table class="data-table">
+    <thead><tr><th>Employee</th><th>Type</th><th>Start</th><th>End</th><th>Manager</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for lv in leave %}
+      <tr>
+        <td class="cell-strong">{{ lv.employee }}</td>
+        <td>{{ lv.type }}</td>
+        <td class="cell-mono">{{ lv.start }}</td>
+        <td class="cell-mono">{{ lv.end }}</td>
+        <td>{{ lv.manager }}</td>
+        <td><span class="status-chip status-{{ 'active' if lv.status == 'Approved' else 'pending' }}" id="leave-status-{{ loop.index0 }}">{{ lv.status }}</span></td>
+        <td>
+          {% if lv.status == "Pending" %}
+          <button type="button" class="table-link leave-approve-btn" data-idx="{{ loop.index0 }}">Approve</button>
+          <button type="button" class="table-link leave-reject-btn" data-idx="{{ loop.index0 }}">Reject</button>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  function resolveLeave(idx, approved) {
+    const chip = document.getElementById("leave-status-" + idx);
+    chip.textContent = approved ? "Approved" : "Rejected";
+    chip.className = "status-chip status-" + (approved ? "active" : "overdue");
+    document.querySelectorAll(`[data-idx="${idx}"]`).forEach((b) => (b.disabled = true));
+  }
+  document.querySelectorAll(".leave-approve-btn").forEach((btn) => btn.addEventListener("click", () => resolveLeave(btn.dataset.idx, true)));
+  document.querySelectorAll(".leave-reject-btn").forEach((btn) => btn.addEventListener("click", () => resolveLeave(btn.dataset.idx, false)));
+})();
+</script>
+{% endblock %}

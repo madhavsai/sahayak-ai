@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Receive Material{% endblock %}
+{% block content %}
+
+<a href="/app/procurement" class="back-link">← Procurement</a>
+
+<div class="page-head">
+  <h1>Receive Material</h1>
+  <p class="page-sub">Against {{ po.id }} — {{ po.vendor }} — {{ po.project }}</p>
+</div>
+
+<div class="capture-flow-card" style="max-width:480px;">
+  <span class="ai-answer-label">{{ po.material }} — ordered {{ po.ordered_quantity }}</span>
+  <p class="cell-muted" style="margin:6px 0 16px;">Tell us what arrived — type it like you'd say it out loud.</p>
+  <textarea id="grn-text" rows="2" style="width:100%; padding:10px 12px; border:1.5px solid var(--color-rule); border-radius:6px; background:var(--color-paper); font-family:inherit; font-size:0.95rem;">120 bags received, 5 damaged</textarea>
+  <button type="button" class="btn btn-primary" id="grn-parse-btn" style="margin-top:12px;">Confirm receipt</button>
+
+  <div class="grn-result" id="grn-result" hidden style="margin-top:18px;">
+    <span class="ai-answer-label">Here's what I understood</span>
+    <div class="settings-row"><span>Ordered</span><span id="grn-ordered"></span></div>
+    <div class="settings-row"><span>Received</span><span id="grn-received"></span></div>
+    <div class="settings-row"><span>Damaged</span><span id="grn-damaged"></span></div>
+    <div class="settings-row"><span>Short</span><span id="grn-short"></span></div>
+    <button type="button" class="btn btn-primary btn-wide" id="grn-confirm-btn" style="margin-top:14px;">CONFIRM</button>
+  </div>
+
+  <p class="inline-confirm" id="grn-done" hidden>✓ Goods receipt logged — project materials and vendor delivery record updated.</p>
+</div>
+
+<div class="capture-grid" style="max-width:480px; margin-top:20px;">
+  <button type="button" class="capture-btn" id="grn-photo-btn"><span class="capture-btn-label">Take Photo</span><span class="capture-btn-desc">Of the delivery / delivery note</span></button>
+  <button type="button" class="capture-btn" id="grn-scan-btn"><span class="capture-btn-label">Scan QR / Barcode</span><span class="capture-btn-desc">Match to the PO automatically</span></button>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  const orderedQty = {{ po.ordered_quantity_num }};
+
+  document.getElementById("grn-parse-btn").addEventListener("click", () => {
+    const text = document.getElementById("grn-text").value.toLowerCase();
+    const receivedMatch = text.match(/(\d+)\s*(bags?|tons?|units?)?\s*received/);
+    const damagedMatch = text.match(/(\d+)\s*(bags?|tons?|units?)?\s*damaged/);
+    const received = receivedMatch ? parseInt(receivedMatch[1], 10) : orderedQty;
+    const damaged = damagedMatch ? parseInt(damagedMatch[1], 10) : 0;
+    const short = Math.max(orderedQty - received, 0);
+
+    document.getElementById("grn-ordered").textContent = orderedQty + " bags";
+    document.getElementById("grn-received").textContent = received + " bags";
+    document.getElementById("grn-damaged").textContent = damaged + " bags";
+    document.getElementById("grn-short").textContent = short + " bags";
+    document.getElementById("grn-result").hidden = false;
+  });
+
+  document.getElementById("grn-confirm-btn").addEventListener("click", () => {
+    document.getElementById("grn-result").hidden = true;
+    document.getElementById("grn-done").hidden = false;
+  });
+
+  ["grn-photo-btn", "grn-scan-btn"].forEach((id) => {
+    document.getElementById(id).addEventListener("click", (e) => {
+      e.target.closest("button").querySelector(".capture-btn-desc").textContent = "✓ Captured";
+    });
+  });
+})();
+</script>
+{% endblock %}

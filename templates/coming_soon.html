@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}{{ name }}{% endblock %}
+{% block content %}
+
+<div class="coming-soon-wrap">
+  <span class="coming-soon-badge">Coming soon</span>
+  <h1>{{ name }}</h1>
+  <p class="coming-soon-copy">{{ description }}</p>
+  <p class="coming-soon-note">This is part of the full Sahayak AI vision (see <code>VISION.md</code>) but isn't
+    built in this pass — Home, Inbox, CRM, Projects, Tasks, and Vendors are the real, working parts of this build.</p>
+  <a href="/app/home" class="btn-link-back">← Back to Home</a>
+</div>
+
+{% endblock %}

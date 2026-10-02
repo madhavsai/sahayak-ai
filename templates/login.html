@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log in — Sahayak AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/app-static/app.css">
+</head>
+<body class="login-body">
+  <div class="login-card">
+    <a href="/" class="app-brand login-brand">Sahayak <span>AI</span></a>
+    <p class="login-sub">Log in to Hyderabad Luxury Villas Pvt Ltd (demo workspace)</p>
+
+    <form class="login-form" onsubmit="window.location.href='/app/home'; return false;">
+      <label>Mobile or email
+        <input type="text" value="ravi.kumar@hyderabadluxuryvillas.in" readonly>
+      </label>
+      <label>Password
+        <input type="password" value="••••••••" readonly>
+      </label>
+      <button type="submit" class="btn btn-primary btn-wide">Log in</button>
+    </form>
+
+    <div class="login-alt">
+      <button type="button" class="btn btn-ghost btn-wide" onclick="window.location.href='/app/home'">Continue with OTP</button>
+      <button type="button" class="btn btn-ghost btn-wide" onclick="window.location.href='/app/home'">Continue with Google</button>
+    </div>
+
+    <p class="login-note">This is a UI-only demo screen — no real authentication yet.
+      Any of the buttons above take you straight into the demo workspace.</p>
+  </div>
+</body>
+</html>

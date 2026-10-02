@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="page-head-row">
+  <div class="page-head">
+    <h1>Good morning, {{ user.name }}</h1>
+    <p class="page-sub">Here is what needs your attention.</p>
+  </div>
+  <div class="quick-actions">
+    <a href="/app/crm" class="qa-btn">+ Customer</a>
+    <a href="/app/projects" class="qa-btn">+ Project</a>
+    <a href="/app/tasks" class="qa-btn">+ Task</a>
+    <a href="/app/inbox" class="qa-btn">Send WhatsApp</a>
+  </div>
+</div>
+
+<section class="home-block">
+  <h2 class="block-title">Today</h2>
+  <div class="today-grid">
+    {% for t in overdue %}
+    <div class="today-card today-card-alert">
+      <span class="today-card-label">Overdue</span>
+      <span class="today-card-text">{{ t.title }}{% if t.project %} — {{ t.project }}{% endif %}</span>
+      <span class="today-card-owner">{{ t.owner }}</span>
+    </div>
+    {% endfor %}
+    <div class="today-card">
+      <span class="today-card-label">Pending approval</span>
+      <span class="today-card-text">Electrical PO — Villa 12</span>
+      <span class="today-card-owner">Priya Sharma</span>
+    </div>
+    <div class="today-card">
+      <span class="today-card-label">Important message</span>
+      <span class="today-card-text">Site supervisor flagged a fitting delay in Telugu — Villa 12</span>
+      <span class="today-card-owner">via WhatsApp</span>
+    </div>
+  </div>
+</section>
+
+<section class="home-block">
+  <h2 class="block-title">Business health</h2>
+  <div class="health-grid">
+    <div class="health-card">
+      <span class="health-label">Revenue (YTD)</span>
+      <span class="health-value">₹{{ "{:,}".format(health.revenue_ytd) }}</span>
+    </div>
+    <div class="health-card">
+      <span class="health-label">Receivables</span>
+      <span class="health-value">₹{{ "{:,}".format(health.receivables) }}</span>
+    </div>
+    <div class="health-card">
+      <span class="health-label">Payables</span>
+      <span class="health-value">₹{{ "{:,}".format(health.payables) }}</span>
+    </div>
+    <div class="health-card">
+      <span class="health-label">Active projects</span>
+      <span class="health-value">{{ health.active_projects }}</span>
+    </div>
+    <div class="health-card">
+      <span class="health-label">Leads</span>
+      <span class="health-value">{{ health.leads }}</span>
+    </div>
+    <div class="health-card">
+      <span class="health-label">Open items</span>
+      <span class="health-value">{{ health.open_tickets }}</span>
+    </div>
+    <div class="health-card">
+      <span class="health-label">Cash position</span>
+      <span class="health-value">₹{{ "{:,}".format(health.cash_position) }}</span>
+    </div>
+  </div>
+</section>
+
+<section class="home-block">
+  <h2 class="block-title">AI insights</h2>
+  <ul class="insight-list">
+    {% for insight in insights %}
+    <li class="insight-item">{{ insight }}</li>
+    {% endfor %}
+  </ul>
+</section>
+
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{{ po.id }}{% endblock %}
+{% block content %}
+
+<a href="/app/procurement/orders" class="back-link">← Purchase Orders</a>
+
+<div class="detail-head">
+  <div>
+    <h1>{{ po.id }}</h1>
+    <p class="page-sub">{{ po.vendor }} · {{ po.project }}</p>
+  </div>
+  <span class="status-chip status-chip-lg status-{{ 'overdue' if po.overdue else po.status|lower|replace(' ', '-') }}">{{ po.status }}</span>
+</div>
+
+<div class="detail-tabs">
+  <span class="detail-tab is-active">Overview</span>
+  <span class="detail-tab">Items</span>
+  <span class="detail-tab">Delivery</span>
+  <span class="detail-tab">Bills</span>
+  <span class="detail-tab">Payments</span>
+</div>
+
+<div class="health-grid">
+  <div class="health-card"><span class="health-label">Amount</span><span class="health-value" style="font-size:1rem;">₹{{ "{:,}".format(po.amount) }}</span></div>
+  <div class="health-card"><span class="health-label">Items</span><span class="health-value" style="font-size:1rem;">{{ po.items }}</span></div>
+  <div class="health-card"><span class="health-label">Expected delivery</span><span class="health-value" style="font-size:1rem;">{{ po.expected_delivery }}</span></div>
+  <div class="health-card"><span class="health-label">Project</span><span class="health-value" style="font-size:1rem;">{{ po.project }}</span></div>
+</div>
+
+<h2 class="block-title" style="margin-top:28px;">Send to vendor</h2>
+<div class="suggestion-row">
+  <button type="button" class="btn btn-ghost send-po-btn" data-channel="Email">Email</button>
+  <button type="button" class="btn btn-ghost send-po-btn" data-channel="WhatsApp">WhatsApp</button>
+  <button type="button" class="btn btn-ghost send-po-btn" data-channel="PDF">Download PDF</button>
+</div>
+<p class="inline-confirm" id="send-po-confirm" hidden></p>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  document.querySelectorAll(".send-po-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const el = document.getElementById("send-po-confirm");
+      el.textContent = btn.dataset.channel === "PDF" ? "✓ PDF generated — download would start here." : `✓ Sent to vendor via ${btn.dataset.channel}.`;
+      el.hidden = false;
+    });
+  });
+})();
+</script>
+{% endblock %}
